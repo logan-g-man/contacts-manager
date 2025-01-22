@@ -171,6 +171,8 @@ tags
 # Persistent undo
 [._]*.un~
 
+.ignore
+
 ##### Emacs
 # -*- mode: gitignore; -*-
 *~
@@ -472,3 +474,7 @@ composer.lock
 *.css.map
 *.sass.map
 *.scss.map
+
+##### Node.js
+node_modules/**/*
+
