@@ -478,3 +478,6 @@ composer.lock
 ##### Node.js
 node_modules/**/*
 
+
+##### misc
+*.*env
