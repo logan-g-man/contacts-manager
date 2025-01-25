@@ -45,14 +45,14 @@ if ($conn->connect_error) {
     sendResponse('error', 'Database connection failed: ' . $conn->connect_error);
 }
 
-// Check if the contact exists and belongs to the user
+// checking if the contact exists and belongs to the user
 $stmt = $conn->prepare('SELECT ID FROM Contacts WHERE ID = ? AND UserID = ?');
 $stmt->bind_param('ii', $inData['contactID'], $inData['userID']);
 $stmt->execute();
 $stmt->store_result();
 
 if ($stmt->num_rows === 0) {
-    sendResponse('error', 'Contact not found or does not belong to the user');
+    sendResponse('error', 'Contact not found or dos not belong to the user');
 }
 $stmt->close();
 

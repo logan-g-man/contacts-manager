@@ -29,7 +29,7 @@ function sendResponse($status, $message, $data = null)
     exit();
 }
 
-// Get the input data
+
 $inData = getRequestInfo();
 
 // Validate input
@@ -51,7 +51,7 @@ $stmt->bind_param('i', $inData['userID']);
 $stmt->execute();
 $result = $stmt->get_result();
 
-// Fetch all rows
+
 $contacts = [];
 while ($row = $result->fetch_assoc()) {
     $contacts[] = $row;

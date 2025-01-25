@@ -45,7 +45,7 @@ if ($conn->connect_error) {
     sendResponse('error', 'Database connection failed: ' . $conn->connect_error);
 }
 
-// Validate that the contact belongs to the user
+// validating that the contact belongs to the user
 $stmt = $conn->prepare('SELECT ID FROM Contacts WHERE ID = ? AND UserID = ?');
 $stmt->bind_param('ii', $inData['contactID'], $inData['userID']);
 $stmt->execute();
@@ -56,7 +56,7 @@ if ($stmt->num_rows === 0) {
 }
 $stmt->close();
 
-// Build the dynamic SQL query for updating fields
+// Build SQL query for updating fields
 $fields = [];
 $params = [];
 $types = '';
@@ -74,12 +74,12 @@ if (empty($fields)) {
     sendResponse('error', 'No fields provided for update');
 }
 
-// Add contactID and userID to the params
+
 $params[] = $inData['contactID'];
 $params[] = $inData['userID'];
 $types .= 'ii';
 
-// Prepare the dynamic SQL query
+
 $sql = "UPDATE Contacts SET " . implode(', ', $fields) . " WHERE ID = ? AND UserID = ?";
 $stmt = $conn->prepare($sql);
 

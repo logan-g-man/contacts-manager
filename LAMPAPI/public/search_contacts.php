@@ -45,7 +45,7 @@ if ($conn->connect_error) {
     sendResponse('error', 'Database connection failed: ' . $conn->connect_error);
 }
 
-// Sanitize input
+
 $userID = $inData['userID'];
 $query = '%' . $conn->real_escape_string($inData['query']) . '%';
 
