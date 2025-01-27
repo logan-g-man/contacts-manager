@@ -48,7 +48,7 @@ function addContact() {
   const tmp = { contact: newContact, userId };
   const jsonPayload = JSON.stringify(tmp);
 
-  const url = `${urlBase}/AddUser.${extension}`;
+  const url = `${URL_BASE}/AddUser.${EXTENSION}`;
 
   const xhr = new XMLHttpRequest();
   xhr.open("POST", url, true);
@@ -75,7 +75,7 @@ function searchContact() {
   const tmp = { search: srch, userId: userId };
   const jsonPayload = JSON.stringify(tmp);
 
-  const url = `${urlBase}/SearchContacts.${extension}`;
+  const url = `${URL_BASE}/SearchContacts.${EXTENSION}`;
 
   const xhr = new XMLHttpRequest();
   xhr.open("POST", url, true);

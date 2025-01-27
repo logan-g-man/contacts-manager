@@ -20,7 +20,7 @@ function doLogin() {
   //	var tmp = {login:login,password:hash};
   const jsonPayload = JSON.stringify(tmp);
 
-  const url = `${urlBase}/Login.${extension}`;
+  const url = `${URL_BASE}/Login.${EXTENSION}`;
 
   const xhr = new XMLHttpRequest();
   xhr.open("POST", url, true);

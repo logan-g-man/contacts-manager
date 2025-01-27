@@ -1,2 +1,2 @@
-const urlBase = "http://localhost:8000/LAMPAPI";
-const extension = "php";
+const URL_BASE = "http://localhost:8000/LAMPAPI";
+const EXTENSION = "php";
