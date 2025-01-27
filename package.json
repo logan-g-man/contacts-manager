@@ -1,16 +1,32 @@
 {
-	"name": "contacts-manager",
-	"version": "1.0.0",
-	"description": "",
-	"main": "index.js",
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
-	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
-	"devDependencies": {
-		"@biomejs/biome": "^1.9.4"
-	},
-	"onlyBuiltDependencies": ["@biomejs/biome"]
+  "name": "contacts-manager",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "concurrently \"php -S localhost:8000\" \"browser-sync start --proxy 'localhost:8000' --files='**/*.php, **/*.html, css/*.css, js/*.js' --reload-delay 200\""
+  },
+  "watch": {
+    "start": {
+      "patterns": [
+        "*.php",
+        "*.html",
+        "css/*.css",
+        "js/*.js"
+      ],
+      "extensions": "php,html,css,js"
+    }
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "browser-sync": "^3.0.3",
+    "concurrently": "^9.1.2"
+  },
+  "onlyBuiltDependencies": [
+    "@biomejs/biome"
+  ]
 }
