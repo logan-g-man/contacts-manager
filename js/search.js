@@ -1,7 +1,3 @@
-let userId = 0;
-let firstName = "";
-let lastName = "";
-
 function saveCookie() {
   const minutes = 20;
   const date = new Date();
@@ -41,8 +37,7 @@ function doLogout() {
   window.location.href = "index.html";
 }
 
-function addContact() {
-  const newcontact = document.getElementById("colorText").value;
+async function addContact(name, email, phone) {
   document.getElementById("contactAddResult").innerHTML = "";
 
   const tmp = { contact: newContact, userId };
@@ -50,54 +45,40 @@ function addContact() {
 
   const url = `${URL_BASE}/AddUser.${EXTENSION}`;
 
-  const xhr = new XMLHttpRequest();
-  xhr.open("POST", url, true);
-  xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
   try {
-    xhr.onreadystatechange = function () {
-      if (this.readyState === 4 && this.status === 200) {
-        document.getElementById("contactAddResult").innerHTML =
-          "contact has been added";
-      }
-    };
-    xhr.send(jsonPayload);
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: jsonPayload,
+    });
+
+    const data = await response.json();
   } catch (err) {
     document.getElementById("contactAddResult").innerHTML = err.message;
   }
 }
 
-function searchContact() {
+async function searchContact() {
   const srch = document.getElementById("searchText").value;
   document.getElementById("contactSearchResult").innerHTML = "";
 
-  let contactList = "";
+  const contactList = "";
 
   const tmp = { search: srch, userId: userId };
   const jsonPayload = JSON.stringify(tmp);
 
   const url = `${URL_BASE}/SearchContacts.${EXTENSION}`;
 
-  const xhr = new XMLHttpRequest();
-  xhr.open("POST", url, true);
-  xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
   try {
-    xhr.onreadystatechange = function () {
-      if (this.readyState === 4 && this.status === 200) {
-        document.getElementById("contactSearchResult").innerHTML =
-          "Contacts(s) has been retrieved";
-        const jsonObject = JSON.parse(xhr.responseText);
-
-        for (let i = 0; i < jsonObject.results.length; i++) {
-          contactList += jsonObject.results[i];
-          if (i < jsonObject.results.length - 1) {
-            contactList += "<br />\r\n";
-          }
-        }
-
-        document.getElementsByTagName("p")[0].innerHTML = contactList;
-      }
-    };
-    xhr.send(jsonPayload);
+    const data = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: jsonPayload,
+    });
   } catch (err) {
     document.getElementById("contactSearchResult").innerHTML = err.message;
   }
