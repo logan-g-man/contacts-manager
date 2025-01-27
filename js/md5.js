@@ -21,8 +21,7 @@
 
 /* eslint-disable strict */
 
-(function ($) {
-	"use strict";
+(($) => {
 
 	/**
 	 * Add integers, wrapping at 2^32.
@@ -33,8 +32,8 @@
 	 * @returns {number} Sum
 	 */
 	function safeAdd(x, y) {
-		var lsw = (x & 0xffff) + (y & 0xffff);
-		var msw = (x >> 16) + (y >> 16) + (lsw >> 16);
+		const lsw = (x & 0xffff) + (y & 0xffff);
+		const msw = (x >> 16) + (y >> 16) + (lsw >> 16);
 		return (msw << 16) | (lsw & 0xffff);
 	}
 
@@ -136,15 +135,15 @@
 		x[len >> 5] |= 0x80 << (len % 32);
 		x[(((len + 64) >>> 9) << 4) + 14] = len;
 
-		var i;
-		var olda;
-		var oldb;
-		var oldc;
-		var oldd;
-		var a = 1732584193;
-		var b = -271733879;
-		var c = -1732584194;
-		var d = 271733878;
+		let i;
+		let olda;
+		let oldb;
+		let oldc;
+		let oldd;
+		let a = 1732584193;
+		let b = -271733879;
+		let c = -1732584194;
+		let d = 271733878;
 
 		for (i = 0; i < x.length; i += 16) {
 			olda = a;
@@ -235,9 +234,9 @@
 	 * @returns {string} MD5 string
 	 */
 	function binl2rstr(input) {
-		var i;
-		var output = "";
-		var length32 = input.length * 32;
+		let i;
+		let output = "";
+		const length32 = input.length * 32;
 		for (i = 0; i < length32; i += 8) {
 			output += String.fromCharCode((input[i >> 5] >>> (i % 32)) & 0xff);
 		}
@@ -252,13 +251,13 @@
 	 * @returns {Array<number>} Array of little-endian words
 	 */
 	function rstr2binl(input) {
-		var i;
-		var output = [];
+		let i;
+		const output = [];
 		output[(input.length >> 2) - 1] = undefined;
 		for (i = 0; i < output.length; i += 1) {
 			output[i] = 0;
 		}
-		var length8 = input.length * 8;
+		const length8 = input.length * 8;
 		for (i = 0; i < length8; i += 8) {
 			output[i >> 5] |= (input.charCodeAt(i / 8) & 0xff) << (i % 32);
 		}
@@ -283,11 +282,11 @@
 	 * @returns {string} Raw MD5 string
 	 */
 	function rstrHMACMD5(key, data) {
-		var i;
-		var bkey = rstr2binl(key);
-		var ipad = [];
-		var opad = [];
-		var hash;
+		let i;
+		let bkey = rstr2binl(key);
+		const ipad = [];
+		const opad = [];
+		let hash;
 		ipad[15] = opad[15] = undefined;
 		if (bkey.length > 16) {
 			bkey = binlMD5(bkey, key.length * 8);
@@ -307,10 +306,10 @@
 	 * @returns {string} Hex encoded string
 	 */
 	function rstr2hex(input) {
-		var hexTab = "0123456789abcdef";
-		var output = "";
-		var x;
-		var i;
+		const hexTab = "0123456789abcdef";
+		let output = "";
+		let x;
+		let i;
 		for (i = 0; i < input.length; i += 1) {
 			x = input.charCodeAt(i);
 			output += hexTab.charAt((x >>> 4) & 0x0f) + hexTab.charAt(x & 0x0f);
@@ -391,9 +390,7 @@
 	}
 
 	if (typeof define === "function" && define.amd) {
-		define(function () {
-			return md5;
-		});
+		define(() => md5);
 	} else if (typeof module === "object" && module.exports) {
 		module.exports = md5;
 	} else {
