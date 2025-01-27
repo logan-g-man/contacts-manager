@@ -1,6 +1,3 @@
-const urlBase = "http://localhost:8000/LAMPAPI";
-const extension = "php";
-
 let userId = 0;
 let firstName = "";
 let lastName = "";
@@ -130,5 +127,5 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
   });
 
-  readCookie();
+  logoutBtn.readCookie();
 });
