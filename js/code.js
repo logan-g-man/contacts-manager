@@ -90,7 +90,7 @@ function doLogout() {
   window.location.href = "index.html";
 }
 
-function addColor() {
+function addContact() {
   const newColor = document.getElementById("colorText").value;
   document.getElementById("colorAddResult").innerHTML = "";
 
@@ -151,3 +151,30 @@ function searchColor() {
     document.getElementById("colorSearchResult").innerHTML = err.message;
   }
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  const addContactBtn = document.getElementById("addContactBtn");
+  const addContactDialog = document.getElementById("addContactDialog");
+  const cancelAddBtn = document.getElementById("cancelAdd");
+  const addContactForm = document.getElementById("addContactForm");
+  const contactList = document.getElementById("contactList");
+  const searchInput = document.getElementById("searchInput");
+  const logoutBtn = document.getElementById("logoutBtn");
+
+  // Show add contact dialog
+  addContactBtn.addEventListener("click", () => {
+    addContactDialog.style.display = "block";
+  });
+
+  // Hide add contact dialog
+  cancelAddBtn.addEventListener("click", () => {
+    addContactDialog.style.display = "none";
+  });
+
+  // Handle form submission (just prevent default for now)
+  addContactForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+  });
+
+  readCookie();
+});
