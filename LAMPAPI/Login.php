@@ -1,4 +1,3 @@
-
 <?php
 require_once 'DbConnection.php';
 header('Access-Control-Allow-Origin: *');
