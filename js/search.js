@@ -5,52 +5,6 @@ let userId = 0;
 let firstName = "";
 let lastName = "";
 
-function doLogin() {
-  userId = 0;
-  firstName = "";
-  lastName = "";
-
-  const login = document.getElementById("loginName").value;
-  const password = document.getElementById("loginPassword").value;
-  //	var hash = md5( password );
-
-  document.getElementById("loginResult").innerHTML = "";
-
-  const tmp = { login: login, password: password };
-  //	var tmp = {login:login,password:hash};
-  const jsonPayload = JSON.stringify(tmp);
-
-  const url = `${urlBase}/Login.${extension}`;
-
-  const xhr = new XMLHttpRequest();
-  xhr.open("POST", url, true);
-  xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
-  try {
-    xhr.onreadystatechange = function () {
-      if (this.readyState === 4 && this.status === 200) {
-        const jsonObject = JSON.parse(xhr.responseText);
-        userId = jsonObject.id;
-
-        if (userId < 1) {
-          document.getElementById("loginResult").innerHTML =
-            "User/Password combination incorrect";
-          return;
-        }
-
-        firstName = jsonObject.firstName;
-        lastName = jsonObject.lastName;
-
-        saveCookie();
-
-        window.location.href = "color.html";
-      }
-    };
-    xhr.send(jsonPayload);
-  } catch (err) {
-    document.getElementById("loginResult").innerHTML = err.message;
-  }
-}
-
 function saveCookie() {
   const minutes = 20;
   const date = new Date();
@@ -91,13 +45,13 @@ function doLogout() {
 }
 
 function addContact() {
-  const newColor = document.getElementById("colorText").value;
-  document.getElementById("colorAddResult").innerHTML = "";
+  const newcontact = document.getElementById("colorText").value;
+  document.getElementById("contactAddResult").innerHTML = "";
 
-  const tmp = { color: newColor, userId };
+  const tmp = { contact: newContact, userId };
   const jsonPayload = JSON.stringify(tmp);
 
-  const url = `${urlBase}/AddColor.${extension}`;
+  const url = `${urlBase}/AddUser.${extension}`;
 
   const xhr = new XMLHttpRequest();
   xhr.open("POST", url, true);
@@ -105,26 +59,26 @@ function addContact() {
   try {
     xhr.onreadystatechange = function () {
       if (this.readyState === 4 && this.status === 200) {
-        document.getElementById("colorAddResult").innerHTML =
-          "Color has been added";
+        document.getElementById("contactAddResult").innerHTML =
+          "contact has been added";
       }
     };
     xhr.send(jsonPayload);
   } catch (err) {
-    document.getElementById("colorAddResult").innerHTML = err.message;
+    document.getElementById("contactAddResult").innerHTML = err.message;
   }
 }
 
-function searchColor() {
+function searchContact() {
   const srch = document.getElementById("searchText").value;
-  document.getElementById("colorSearchResult").innerHTML = "";
+  document.getElementById("contactSearchResult").innerHTML = "";
 
-  let colorList = "";
+  let contactList = "";
 
   const tmp = { search: srch, userId: userId };
   const jsonPayload = JSON.stringify(tmp);
 
-  const url = `${urlBase}/SearchColors.${extension}`;
+  const url = `${urlBase}/SearchContacts.${extension}`;
 
   const xhr = new XMLHttpRequest();
   xhr.open("POST", url, true);
@@ -132,23 +86,23 @@ function searchColor() {
   try {
     xhr.onreadystatechange = function () {
       if (this.readyState === 4 && this.status === 200) {
-        document.getElementById("colorSearchResult").innerHTML =
-          "Color(s) has been retrieved";
+        document.getElementById("contactSearchResult").innerHTML =
+          "Contacts(s) has been retrieved";
         const jsonObject = JSON.parse(xhr.responseText);
 
         for (let i = 0; i < jsonObject.results.length; i++) {
-          colorList += jsonObject.results[i];
+          contactList += jsonObject.results[i];
           if (i < jsonObject.results.length - 1) {
-            colorList += "<br />\r\n";
+            contactList += "<br />\r\n";
           }
         }
 
-        document.getElementsByTagName("p")[0].innerHTML = colorList;
+        document.getElementsByTagName("p")[0].innerHTML = contactList;
       }
     };
     xhr.send(jsonPayload);
   } catch (err) {
-    document.getElementById("colorSearchResult").innerHTML = err.message;
+    document.getElementById("contactSearchResult").innerHTML = err.message;
   }
 }
 
