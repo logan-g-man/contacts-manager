@@ -1,3 +1,33 @@
+/**
+ * @param {string} name
+ * @param {string} email
+ * @param {string} phone
+ * @param {number} userId
+ */
+function createContactCard(contact) {
+  const contactCard = document.createElement("div");
+  contactCard.className = "contact-card";
+
+  const contactInfo = document.createElement("div");
+  contactInfo.className = "contact-info";
+
+  const name = document.createElement("h3");
+  name.textContent = `Name: ${contact.name}`;
+
+  const email = document.createElement("p");
+  email.textContent = `Email: ${contact.email}`;
+
+  const phone = document.createElement("p");
+  phone.textContent = `Phone: ${contact.phone}`;
+
+  contactInfo.appendChild(name);
+  contactInfo.appendChild(email);
+  contactInfo.appendChild(phone);
+  contactCard.appendChild(contactInfo);
+
+  return contactCard;
+}
+
 function saveCookie() {
   const minutes = 20;
   const date = new Date();
@@ -38,9 +68,7 @@ function doLogout() {
 }
 
 async function addContact(name, email, phone) {
-  document.getElementById("contactAddResult").innerHTML = "";
-
-  const tmp = { contact: newContact, userId };
+  const tmp = { name: name, email: email, phone: phone, userId: userId };
   const jsonPayload = JSON.stringify(tmp);
 
   const url = `${URL_BASE}/AddUser.${EXTENSION}`;
@@ -60,25 +88,52 @@ async function addContact(name, email, phone) {
   }
 }
 
-async function searchContact() {
-  const srch = document.getElementById("searchText").value;
-  document.getElementById("contactSearchResult").innerHTML = "";
-
-  const contactList = "";
-
-  const tmp = { search: srch, userId: userId };
-  const jsonPayload = JSON.stringify(tmp);
-
+async function searchContact(queryParam) {
+  const jsonPayload = JSON.stringify(queryParam);
   const url = `${URL_BASE}/SearchContacts.${EXTENSION}`;
 
   try {
-    const data = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    // const response = await fetch(url, {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: jsonPayload,
+    // });
+    //
+    // const data = await response.json();
+    // mock data
+    const data = [
+      {
+        name: "John Doe",
+        email: "john.doe@example.com",
+        phone: "123-456-7890",
       },
-      body: jsonPayload,
-    });
+      {
+        name: "Jane Smith",
+        email: "jane.smith@example.com",
+        phone: "098-765-4321",
+      },
+      {
+        name: "Bob Johnson",
+        email: "bob.j@example.com",
+        phone: "555-555-5555",
+      },
+      {
+        name: "Alice Brown",
+        email: "alice.b@example.com",
+        phone: "111-222-3333",
+      },
+    ];
+
+    const contactList = document.getElementById("contactList");
+    contactList.innerHTML = "";
+
+    for (const contact of data) {
+      const newContactCard = createContactCard(contact);
+
+      contactList.appendChild(newContactCard);
+    }
   } catch (err) {
     document.getElementById("contactSearchResult").innerHTML = err.message;
   }
@@ -89,9 +144,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const addContactDialog = document.getElementById("addContactDialog");
   const cancelAddBtn = document.getElementById("cancelAdd");
   const addContactForm = document.getElementById("addContactForm");
-  const contactList = document.getElementById("contactList");
   const searchInput = document.getElementById("searchInput");
   const logoutBtn = document.getElementById("logoutBtn");
+  const searchBtn = document.getElementById("searchBtn");
 
   // Show add contact dialog
   addContactBtn.addEventListener("click", () => {
@@ -106,6 +161,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // Handle form submission (just prevent default for now)
   addContactForm.addEventListener("submit", (e) => {
     e.preventDefault();
+  });
+
+  searchBtn.addEventListener("click", () => {
+    const query = searchInput.value.trim();
+    searchContact({ query });
   });
 
   logoutBtn.readCookie();
