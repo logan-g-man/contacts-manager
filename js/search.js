@@ -1,28 +1,3 @@
-/**
- * @param {string} name
- * @param {string} email
- * @param {string} phone
- * @param {number} userId
- */
-function createContactCard(contact) {
-  const contactCard = document.createElement("div");
-  contactCard.className = "contact-card";
-
-  contactCard.innerHTML = `
-    <div class="contact-info">
-      <h3>Name: ${contact.name}</h3>
-      <p>Email: ${contact.email}</p>
-      <p>Phone: ${contact.phone}</p>
-    </div>
-    <button class="delete-btn">Delete</button>
-  `;
-
-  contactCard.querySelector(".delete-btn").addEventListener("click", () => {
-    removeContact(contact);
-  });
-
-  return contactCard;
-}
 function saveCookie() {
   const minutes = 20;
   const date = new Date();
@@ -60,27 +35,6 @@ function doLogout() {
   lastName = "";
   document.cookie = "firstName= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
   window.location.href = "index.html";
-}
-
-async function addContact(name, email, phone) {
-  const tmp = { name: name, email: email, phone: phone, userId: userId };
-  const jsonPayload = JSON.stringify(tmp);
-
-  const url = `${URL_BASE}/AddUser.${EXTENSION}`;
-
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: jsonPayload,
-    });
-
-    const data = await response.json();
-  } catch (err) {
-    document.getElementById("contactAddResult").innerHTML = err.message;
-  }
 }
 
 async function searchContact(queryParam) {
@@ -135,28 +89,8 @@ async function searchContact(queryParam) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  const addContactBtn = document.getElementById("addContactBtn");
-  const addContactDialog = document.getElementById("addContactDialog");
-  const cancelAddBtn = document.getElementById("cancelAdd");
-  const addContactForm = document.getElementById("addContactForm");
   const searchInput = document.getElementById("searchInput");
-  const logoutBtn = document.getElementById("logoutBtn");
   const searchBtn = document.getElementById("searchBtn");
-
-  // Show add contact dialog
-  addContactBtn.addEventListener("click", () => {
-    addContactDialog.style.display = "block";
-  });
-
-  // Hide add contact dialog
-  cancelAddBtn.addEventListener("click", () => {
-    addContactDialog.style.display = "none";
-  });
-
-  // Handle form submission (just prevent default for now)
-  addContactForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-  });
 
   searchBtn.addEventListener("click", () => {
     const query = searchInput.value.trim();
