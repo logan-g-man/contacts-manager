@@ -7,9 +7,13 @@ header('Content-Type: application/json');
 
 // Handle preflight requests
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    error_log("OPTIONS Request Handled: Sending 200 OK and exiting.");
     http_response_code(200);
     exit();
 }
+
+
+error_log("Processing actual request (not OPTIONS)...");
 
 // Parse the incoming request
 function getRequestInfo()
