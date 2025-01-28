@@ -8,26 +8,21 @@ function createContactCard(contact) {
   const contactCard = document.createElement("div");
   contactCard.className = "contact-card";
 
-  const contactInfo = document.createElement("div");
-  contactInfo.className = "contact-info";
+  contactCard.innerHTML = `
+    <div class="contact-info">
+      <h3>Name: ${contact.name}</h3>
+      <p>Email: ${contact.email}</p>
+      <p>Phone: ${contact.phone}</p>
+    </div>
+    <button class="delete-btn">Delete</button>
+  `;
 
-  const name = document.createElement("h3");
-  name.textContent = `Name: ${contact.name}`;
-
-  const email = document.createElement("p");
-  email.textContent = `Email: ${contact.email}`;
-
-  const phone = document.createElement("p");
-  phone.textContent = `Phone: ${contact.phone}`;
-
-  contactInfo.appendChild(name);
-  contactInfo.appendChild(email);
-  contactInfo.appendChild(phone);
-  contactCard.appendChild(contactInfo);
+  contactCard.querySelector(".delete-btn").addEventListener("click", () => {
+    removeContact(contact);
+  });
 
   return contactCard;
 }
-
 function saveCookie() {
   const minutes = 20;
   const date = new Date();

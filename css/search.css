@@ -90,3 +90,7 @@ header h1 {
 #logoutBtn:hover {
   background-color: #d32f2f;
 }
+
+.delete-btn {
+  background-color: #f44336;
+}
