@@ -6,10 +6,6 @@ function saveCookie(firstName, lastName, userId) {
 }
 
 async function doLogin(username, password) {
-  userId = 0;
-  firstName = "";
-  lastName = "";
-
   //	var hash = md5( password );
 
   document.getElementById("loginResult").innerHTML = "";
