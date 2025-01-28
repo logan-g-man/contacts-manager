@@ -25,6 +25,8 @@ h2 {
 
 .form-group {
   margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
 }
 
 label {
@@ -33,7 +35,6 @@ label {
 }
 
 input {
-  width: 100%;
   padding: 0.5rem;
   border: 1px solid #ccc;
   border-radius: 4px;
