@@ -1,10 +1,10 @@
-function createContactCard(contact) {
+export function createContactCard(contact) {
   const contactCard = document.createElement("div");
   contactCard.className = "contact-card";
 
   contactCard.innerHTML = `
     <div class="contact-info">
-      <h3>Name: ${contact.name}</h3>
+      <h3>Name: ${contact.firstName} ${contact.lastName}</h3>
       <p>Email: ${contact.email}</p>
       <p>Phone: ${contact.phone}</p>
     </div>
@@ -40,7 +40,8 @@ function openContactDialog(contact = null) {
   if (contact) {
     dialogTitle.textContent = "Edit Contact";
     submitBtn.textContent = "Update Contact";
-    form.name.value = contact.name;
+    form.firstName.value = contact.firstName;
+    form.lastName.value = contact.lastName;
     form.email.value = contact.email;
     form.phone.value = contact.phone;
     form.dataset.mode = "edit";
@@ -56,8 +57,14 @@ function openContactDialog(contact = null) {
   dialog.style.display = "block";
 }
 
-async function addContact(name, email, phone) {
-  const tmp = { name: name, email: email, phone: phone, userId: userId };
+async function addContact(firstName, lastName, email, phone) {
+  const tmp = {
+    firstName,
+    lastName,
+    email,
+    phone,
+    userId,
+  };
   const jsonPayload = JSON.stringify(tmp);
 
   const url = `${URL_BASE}/AddUser.${EXTENSION}`;
@@ -77,8 +84,15 @@ async function addContact(name, email, phone) {
   }
 }
 
-async function updateContact(contactId, name, email, phone) {
-  const tmp = { id: contactId, name, email, phone, userId };
+async function updateContact(contactId, firstName, lastName, email, phone) {
+  const tmp = {
+    id: contactId,
+    firstName,
+    lastName,
+    email,
+    phone,
+    userId,
+  };
   const jsonPayload = JSON.stringify(tmp);
 
   const url = `${URL_BASE}/UpdateContact.${EXTENSION}`;
@@ -124,21 +138,26 @@ document.addEventListener("DOMContentLoaded", () => {
   // Handle form submission
   addContactForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const { name, email, phone } = e.target;
+    const { firstName, lastName, email, phone } = e.target;
 
     if (e.target.dataset.mode === "edit") {
       await updateContact(
         e.target.dataset.contactId,
-        name.value,
+        firstName.value,
+        lastName.value,
         email.value,
         phone.value,
       );
     } else {
-      await addContact(name.value, email.value, phone.value);
+      await addContact(
+        firstName.value,
+        lastName.value,
+        email.value,
+        phone.value,
+      );
     }
 
     addContactDialog.style.display = "none";
     searchContact(""); // Refresh contact list
   });
 });
-

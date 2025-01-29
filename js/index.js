@@ -1,13 +1,16 @@
+import { URL_BASE, EXTENSION } from "./global.js";
+
 function saveCookie(firstName, lastName, userId) {
-  const minutes = 20;
-  const date = new Date();
-  date.setTime(date.getTime() + minutes * 60 * 1000);
-  document.cookie = `firstName=${firstName},lastName=${lastName},userId=${userId};expires=${date.toGMTString()}`;
+  const userData = {
+    firstName,
+    lastName,
+    userId,
+    expiresAt: new Date().getTime() + (20 * 60 * 1000) // 20 minutes
+  };
+  localStorage.setItem('userData', JSON.stringify(userData));
 }
 
 async function doLogin(username, password) {
-  //	var hash = md5( password );
-
   document.getElementById("loginResult").innerHTML = "";
 
   const tmp = { login: username, password: password };

@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -74,8 +74,12 @@
         <h2>Add New Contact</h2>
         <form id="addContactForm">
           <div class="form-group">
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" required />
+            <label for="firstName">First Name:</label>
+            <input type="text" id="firstName" name="firstName" required />
+          </div>
+          <div class="form-group">
+            <label for="lastName">Last Name:</label>
+            <input type="text" id="lastName" name="lastName" required />
           </div>
           <div class="form-group">
             <label for="email">Email:</label>
@@ -93,7 +97,7 @@
       </div>
     </div>
   </body>
-  <script type="text/javascript" src="js/global.js"></script>
-  <script type="text/javascript" src="js/contact.js"></script>
-  <script type="text/javascript" src="js/search.js"></script>
+  <script type="module" src="js/global.js"></script>
+  <script type="module" src="js/contact.js"></script>
+  <script type="module" src="js/search.js"></script>
 </html>

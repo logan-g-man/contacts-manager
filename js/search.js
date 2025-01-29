@@ -1,25 +1,19 @@
-function saveCookie() {
-  const minutes = 20;
-  const date = new Date();
-  date.setTime(date.getTime() + minutes * 60 * 1000);
-  document.cookie = `firstName=${firstName},lastName=${lastName},userId=${userId};expires=${date.toGMTString()}`;
-}
+import { faker } from "https://esm.sh/@faker-js/faker";
+import { URL_BASE, EXTENSION } from "./global.js";
+import { createContactCard } from "./contact.js";
 
 function readCookie() {
-  userId = -1;
-  const data = document.cookie;
-  const splits = data.split(",");
-  for (let i = 0; i < splits.length; i++) {
-    const thisOne = splits[i].trim();
-    const tokens = thisOne.split("=");
-    if (tokens[0] === "firstName") {
-      firstName = tokens[1];
-    } else if (tokens[0] === "lastName") {
-      lastName = tokens[1];
-    } else if (tokens[0] === "userId") {
-      userId = Number.parseInt(tokens[1].trim());
-    }
+  const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+
+  if (!userData.expiresAt || userData.expiresAt < new Date().getTime()) {
+    localStorage.removeItem('userData');
+    window.location.href = "index.html";
+    return;
   }
+
+  firstName = userData.firstName;
+  lastName = userData.lastName;
+  userId = userData.userId;
 
   if (userId < 0) {
     window.location.href = "index.html";
@@ -30,10 +24,7 @@ function readCookie() {
 }
 
 function doLogout() {
-  userId = 0;
-  firstName = "";
-  lastName = "";
-  document.cookie = "firstName= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
+  localStorage.removeItem('userData');
   window.location.href = "index.html";
 }
 
@@ -49,31 +40,15 @@ async function searchContact(queryParam) {
     //   },
     //   body: jsonPayload,
     // });
-    //
+
     // const data = await response.json();
-    // mock data
-    const data = [
-      {
-        name: "John Doe",
-        email: "john.doe@example.com",
-        phone: "123-456-7890",
-      },
-      {
-        name: "Jane Smith",
-        email: "jane.smith@example.com",
-        phone: "098-765-4321",
-      },
-      {
-        name: "Bob Johnson",
-        email: "bob.j@example.com",
-        phone: "555-555-5555",
-      },
-      {
-        name: "Alice Brown",
-        email: "alice.b@example.com",
-        phone: "111-222-3333",
-      },
-    ];
+    // Replace mock data with Faker generated data
+    const data = Array.from({ length: 5 }, () => ({
+      firstName: faker.person.firstName(),
+      lastName: faker.person.lastName(),
+      email: faker.internet.email(),
+      phone: faker.phone.number("###-###-####"),
+    }));
 
     const contactList = document.getElementById("contactList");
     contactList.innerHTML = "";
@@ -84,7 +59,8 @@ async function searchContact(queryParam) {
       contactList.appendChild(newContactCard);
     }
   } catch (err) {
-    document.getElementById("contactSearchResult").innerHTML = err.message;
+    console.error(err);
+    // document.getElementById("contactSearchResult").innerHTML = err.message;
   }
 }
 
@@ -97,5 +73,5 @@ document.addEventListener("DOMContentLoaded", () => {
     searchContact({ query });
   });
 
-  logoutBtn.readCookie();
+  readCookie();
 });
