@@ -1,2 +1,2 @@
-export const URL_BASE = "http://localhost:8000/LAMPAPI";
+export const URL_BASE = "http://www.contactsmanager.tech/LAMPAPI/public";
 export const EXTENSION = "php";

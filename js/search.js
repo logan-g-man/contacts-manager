@@ -30,25 +30,26 @@ function doLogout() {
 
 async function searchContact(queryParam) {
   const jsonPayload = JSON.stringify(queryParam);
-  const url = `${URL_BASE}/SearchContacts.${EXTENSION}`;
+  const url = `${URL_BASE}/search_contacts.${EXTENSION}`;
 
   try {
-    // const response = await fetch(url, {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: jsonPayload,
-    // });
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: jsonPayload,
+    });
 
-    // const data = await response.json();
-    // Replace mock data with Faker generated data
-    const data = Array.from({ length: 5 }, () => ({
-      firstName: faker.person.firstName(),
-      lastName: faker.person.lastName(),
-      email: faker.internet.email(),
-      phone: faker.phone.number("###-###-####"),
-    }));
+    const data = (await response.json()).data;
+    console.log(data);
+
+    // const data = Array.from({ length: 5 }, () => ({
+    //   firstName: faker.person.firstName(),
+    //   lastName: faker.person.lastName(),
+    //   email: faker.internet.email(),
+    //   phone: faker.phone.number("###-###-####"),
+    // }));
 
     const contactList = document.getElementById("contactList");
     contactList.innerHTML = "";
@@ -60,7 +61,6 @@ async function searchContact(queryParam) {
     }
   } catch (err) {
     console.error(err);
-    // document.getElementById("contactSearchResult").innerHTML = err.message;
   }
 }
 
@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   searchBtn.addEventListener("click", () => {
     const query = searchInput.value.trim();
-    searchContact({ query });
+    searchContact({ userID: 6, query });
   });
 
   // readCookie();

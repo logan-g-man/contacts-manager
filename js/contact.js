@@ -4,9 +4,10 @@ export function createContactCard(contact) {
 
   contactCard.innerHTML = `
     <div class="contact-info">
-      <h3>Name: ${contact.firstName} ${contact.lastName}</h3>
-      <p>Email: ${contact.email}</p>
-      <p>Phone: ${contact.phone}</p>
+      <h3>Name: ${contact.FirstName} ${contact.LastName}</h3>
+      <p>Email: ${contact.Email}</p>
+      <p>Phone: ${contact.Phone}</p>
+      <p>Address: ${contact.Address}</p>
     </div>
     <div class="contact-actions">
       <button class="edit-btn">
