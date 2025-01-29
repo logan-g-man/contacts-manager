@@ -38,6 +38,7 @@ button {
   align-items: center;
   font-weight: bold;
   gap: 0.5rem;
+  min-width: max-content;
 }
 
 button:hover {
