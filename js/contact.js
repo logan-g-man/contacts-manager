@@ -41,12 +41,12 @@ function openContactDialog(contact = null) {
   if (contact) {
     dialogTitle.textContent = "Edit Contact";
     submitBtn.textContent = "Update Contact";
-    form.firstName.value = contact.firstName;
-    form.lastName.value = contact.lastName;
-    form.email.value = contact.email;
-    form.phone.value = contact.phone;
+    form.firstName.value = contact.FirstName;
+    form.lastName.value = contact.LastName;
+    form.email.value = contact.Email;
+    form.phone.value = contact.Phone;
     form.dataset.mode = "edit";
-    form.dataset.contactId = contact.id;
+    form.dataset.contactId = contact.Id;
   } else {
     dialogTitle.textContent = "Add New Contact";
     submitBtn.textContent = "Add Contact";
