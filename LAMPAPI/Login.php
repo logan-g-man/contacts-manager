@@ -1,15 +1,19 @@
 
 <?php
+require_once 'DbConnection.php';
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
 $inData = getRequestInfo();
 
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
 $id = 0;
 $firstName = '';
 $lastName = '';
 
-$conn = new mysqli('localhost', 'TheBeast', 'WeLoveCOP4331', 'COP4331');
+$conn = getConnection();
 if ($conn->connect_error) {
     returnWithError($conn->connect_error);
 } else {
@@ -50,5 +54,3 @@ function returnWithInfo($firstName, $lastName, $id)
     $retValue = '{"id":' . $id . ',"firstName":"' . $firstName . '","lastName":"' . $lastName . '","error":""}';
     sendResultInfoAsJson($retValue);
 }
-
-?>
