@@ -3,10 +3,10 @@ import { URL_BASE, EXTENSION } from "./global.js";
 import { createContactCard } from "./contact.js";
 
 function readCookie() {
-  const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+  const userData = JSON.parse(localStorage.getItem("userData") || "{}");
 
   if (!userData.expiresAt || userData.expiresAt < new Date().getTime()) {
-    localStorage.removeItem('userData');
+    localStorage.removeItem("userData");
     window.location.href = "index.html";
     return;
   }
@@ -24,7 +24,7 @@ function readCookie() {
 }
 
 function doLogout() {
-  localStorage.removeItem('userData');
+  localStorage.removeItem("userData");
   window.location.href = "index.html";
 }
 
@@ -73,5 +73,5 @@ document.addEventListener("DOMContentLoaded", () => {
     searchContact({ query });
   });
 
-  readCookie();
+  // readCookie();
 });
