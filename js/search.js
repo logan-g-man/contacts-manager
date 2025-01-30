@@ -28,7 +28,7 @@ function doLogout() {
   window.location.href = "index.html";
 }
 
-async function searchContact(queryParam) {
+export async function searchContact(queryParam) {
   const jsonPayload = JSON.stringify(queryParam);
   const url = `${URL_BASE}/search_contacts.${EXTENSION}`;
 

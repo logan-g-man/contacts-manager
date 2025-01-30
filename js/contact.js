@@ -1,4 +1,5 @@
 import { URL_BASE, EXTENSION } from "./global.js";
+import { searchContact } from "./search.js";
 
 export function createContactCard(contact) {
   const contactCard = document.createElement("div");
@@ -69,9 +70,9 @@ function getUserId() {
 
 async function addContact(firstName, lastName, email, phone, address, notes) {
 
-  const userId = getUserId(); // Retrieve user ID from localStorage
+  const userID = getUserId(); // Retrieve user ID from localStorage
 
-  if (!userId) {
+  if (!userID) {
     document.getElementById("contactAddResult").innerHTML = "User ID not found. Please log in again.";
     return;
   }
@@ -82,10 +83,10 @@ async function addContact(firstName, lastName, email, phone, address, notes) {
     phone,
     address,
     notes,
-    userId, // Ensure this is set properly.
+    userID, // Ensure this is set properly.
   };
   const jsonPayload = JSON.stringify(tmp);
-
+  console.log(jsonPayload);
   const url = `${URL_BASE}/create_contact.${EXTENSION}`;
 
   try {
@@ -98,7 +99,9 @@ async function addContact(firstName, lastName, email, phone, address, notes) {
     });
 
     const data = await response.json();
+    console.log(data.message);
     if (data.status !== "success") {
+      console.log("It was actually a success");
       document.getElementById("contactAddResult").innerHTML = data.message || "Error adding contact.";
     }
   } catch (err) {
@@ -109,9 +112,9 @@ async function addContact(firstName, lastName, email, phone, address, notes) {
 
 async function updateContact(contactId, firstName, lastName, email, phone, address, notes) {
 
-  const userId = getUserId(); // Retrieve user ID from localStorage
+  const userID = getUserId(); // Retrieve user ID from localStorage
 
-  if (!userId) {
+  if (!userID) {
     document.getElementById("contactAddResult").innerHTML = "User ID not found. Please log in again.";
     return;
   }
