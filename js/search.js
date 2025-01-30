@@ -11,9 +11,9 @@ function readCookie() {
     return;
   }
 
-  firstName = userData.firstName;
-  lastName = userData.lastName;
-  userId = userData.userId;
+  window.firstName = userData.firstName;
+  window.lastName = userData.lastName;
+  window.userId = userData.userId;
 
   if (userId < 0) {
     window.location.href = "index.html";
@@ -28,10 +28,12 @@ function doLogout() {
   window.location.href = "index.html";
 }
 
-export async function searchContact(queryParam) {
-  const jsonPayload = JSON.stringify(queryParam);
-  const url = `${URL_BASE}/search_contacts.${EXTENSION}`;
+// Fetch and display all contacts for the logged-in user
+async function getAllContacts(userId) {
+  const url = `${URL_BASE}/get_contacts.${EXTENSION}`;
+  const jsonPayload = JSON.stringify({ userID: userId });
 
+  console.log("Fetching contacts for user:", userId);
   try {
     const response = await fetch(url, {
       method: "POST",
@@ -42,36 +44,65 @@ export async function searchContact(queryParam) {
     });
 
     const data = (await response.json()).data;
-    console.log(data);
-
-    // const data = Array.from({ length: 5 }, () => ({
-    //   firstName: faker.person.firstName(),
-    //   lastName: faker.person.lastName(),
-    //   email: faker.internet.email(),
-    //   phone: faker.phone.number("###-###-####"),
-    // }));
-
-    const contactList = document.getElementById("contactList");
-    contactList.innerHTML = "";
-
-    for (const contact of data) {
-      const newContactCard = createContactCard(contact);
-
-      contactList.appendChild(newContactCard);
-    }
+    displayContacts(data);
   } catch (err) {
-    console.error(err);
+    console.error("Error fetching all contacts:", err);
+  }
+}
+
+// Search contacts based on the query
+async function searchContact(userId, query) {
+  const url = `${URL_BASE}/search_contacts.${EXTENSION}`;
+  const jsonPayload = JSON.stringify({ userID: userId, query });
+
+  console.log("Searching contacts for user:", userId, "Query:", query);
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: jsonPayload,
+    });
+
+    const data = (await response.json()).data;
+    displayContacts(data);
+  } catch (err) {
+    console.error("Error searching contacts:", err);
+  }
+}
+// Display contacts on the page
+function displayContacts(contacts = []) {
+  const contactList = document.getElementById("contactList");
+  contactList.innerHTML = contacts.length ? "" : "No contact found!";
+
+  for (const contact of contacts) {
+    const newContactCard = createContactCard(contact);
+    contactList.appendChild(newContactCard);
   }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  const searchInput = document.getElementById("searchInput");
-  const searchBtn = document.getElementById("searchBtn");
+  readCookie();
+  console.log("User ID after reading cookie:", window.userId);
+  // Ensure userId is available
+  if (window.userId) {
+    getAllContacts(window.userId);
 
-  searchBtn.addEventListener("click", () => {
-    const query = searchInput.value.trim();
-    searchContact({ userID: 6, query });
-  });
+    const searchInput = document.getElementById("searchInput");
+    const searchBtn = document.getElementById("searchBtn");
 
-  // readCookie();
+    searchBtn.addEventListener("click", () => {
+      const query = searchInput.value.trim();
+      if (query === "") {
+        getAllContacts(window.userId);
+      } else {
+        searchContact(window.userId, query);
+      }
+    });
+  } else {
+    console.error("User ID not found, redirecting to login.");
+    window.location.href = "index.html";
+  }
 });
+
