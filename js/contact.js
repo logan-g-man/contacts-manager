@@ -1,3 +1,5 @@
+import { URL_BASE, EXTENSION } from "./global.js";
+
 export function createContactCard(contact) {
   const contactCard = document.createElement("div");
   contactCard.className = "contact-card";
