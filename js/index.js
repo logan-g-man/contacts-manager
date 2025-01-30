@@ -72,7 +72,7 @@ async function doLogin(username, password) {
   const jsonPayload = JSON.stringify(tmp);
 
   try {
-    const response = await fetch(`${URL_BASE}/Login.${EXTENSION}`, {
+    const response = await fetch(`${URL_BASE}/login.${EXTENSION}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
