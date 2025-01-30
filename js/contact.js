@@ -186,9 +186,9 @@ async function removeContact(contact) {
 
       // Refresh the contact list based on the current query
       if (query === "") {
-        getAllContacts();  // If no search query, load all contacts
+        getAllContacts(userID);  // If no search query, load all contacts
       } else {
-        searchContact(query);  // Otherwise, refresh based on search query
+        searchContact(userID, query);  // Otherwise, refresh based on search query
       }
 
     } else {
