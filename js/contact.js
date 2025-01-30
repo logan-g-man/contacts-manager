@@ -160,6 +160,7 @@ async function removeContact(contact) {
     document.getElementById("contactAddResult").innerHTML = "User ID not found. Please log in again.";
     return;
   }
+
   const contactId = contact.ID;  // The contact ID to delete
 
   const url = `${URL_BASE}/delete_contact.${EXTENSION}`;
@@ -178,7 +179,18 @@ async function removeContact(contact) {
 
     if (data.status === "success") {
       console.log(`Contact ID ${contactId} successfully deleted.`);
-      document.getElementById("contactList").removeChild(document.getElementById(`contact-${contactId}`));
+
+      // Get the current query from the search input
+      const searchInput = document.getElementById("searchInput");
+      const query = searchInput.value.trim();
+
+      // Refresh the contact list based on the current query
+      if (query === "") {
+        getAllContacts();  // If no search query, load all contacts
+      } else {
+        searchContact(query);  // Otherwise, refresh based on search query
+      }
+
     } else {
       console.error(`Failed to delete contact: ${data.message}`);
       alert(`Error: ${data.message}`);
@@ -188,6 +200,7 @@ async function removeContact(contact) {
     alert("An unexpected error occurred while deleting the contact.");
   }
 }
+
 
 
 document.addEventListener("DOMContentLoaded", () => {
