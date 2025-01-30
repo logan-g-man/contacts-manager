@@ -52,17 +52,19 @@ function openContactDialog(contact = null) {
     form.phone.value = contact.Phone;
     form.address.value = contact.Address || "";
     form.notes.value = contact.Notes || "";
-    form.dataset.mode = "edit";
-    form.dataset.contactId = contact.ID;
+    form.dataset.mode = "edit";  // Set to edit mode
+    form.dataset.contactId = contact.ID;  // Store the contact ID for updating
   } else {
     dialogTitle.textContent = "Add New Contact";
     submitBtn.textContent = "Add Contact";
     form.reset();
-    delete form.dataset.contactId;
+    form.dataset.mode = "add";  // Reset to add mode
+    delete form.dataset.contactId;  // Clear any leftover contact ID
   }
 
   dialog.style.display = "block";
 }
+
 
 // Utility function to get the user ID from localStorage
 function getUserId() {
@@ -267,6 +269,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const notesValue = notes.value || '';
 
     if (e.target.dataset.mode === "edit") {
+      // Call updateContact() if in edit mode
       await updateContact(
         e.target.dataset.contactId,
         firstName.value,
@@ -277,6 +280,7 @@ document.addEventListener("DOMContentLoaded", () => {
         notesValue
       );
     } else {
+      // Call addContact() if in add mode
       await addContact(
         firstName.value,
         lastName.value,
@@ -287,7 +291,8 @@ document.addEventListener("DOMContentLoaded", () => {
       );
     }
 
-    addContactDialog.style.display = "none";  // Close dialog after submission
+    // Close dialog after submission and refresh contacts
+    addContactDialog.style.display = "none";
     searchContact(userID, "");  // Refresh contact list
   });
 
