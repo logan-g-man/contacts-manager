@@ -11,6 +11,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
+
+
+// Loading dependencies relating to the DbConection instead of using hard-coded values
+
+require_once __DIR__ . '/DbConnection.php';
+
 // Parse the incoming request
 function getRequestInfo()
 {
@@ -74,14 +80,10 @@ if (!isValidPhone($inData['phone'])) {
     sendResponse('error', 'Invalid phone number format');
 }
 
-// Connect to the database
-$conn = new mysqli('localhost', 'TheBeast', 'WeLoveCOP4331', 'COP4331');
+// Connect to the database USING env variables instead of hard-coded source code configs
+$conn = getConnection();
 
-// Check connection
-if ($conn->connect_error) {
-    error_log("Database Connection Error: " . $conn->connect_error);
-    sendResponse('error', 'Database connection failed: ' . $conn->connect_error);
-}
+// Error checking already exists within call
 
 // Check if the user already exists
 $stmt = $conn->prepare('SELECT ID FROM Users WHERE Login = ? OR Email = ?');
@@ -99,6 +101,10 @@ if ($stmt->num_rows > 0) {
 }
 $stmt->close();
 
+// HASHING PASSWORD BEFORE STORING IT WITHIN THE DB FOR SECURITY PURPOSES
+
+$hashPassword = password_hash($inData['password'],PASSWORD_BCRYPT);
+
 // Insert the new user into the database
 $stmt = $conn->prepare('INSERT INTO Users (FirstName, LastName, Login, Password, Email, Phone) VALUES (?, ?, ?, ?, ?, ?)');
 if (!$stmt) {
@@ -110,7 +116,7 @@ $stmt->bind_param(
     $inData['firstName'],
     $inData['lastName'],
     $inData['login'],
-    $inData['password'],
+    $hashPassword, // Storing Hashed password versus hard-coded one
     $inData['email'],
     $inData['phone']
 );
