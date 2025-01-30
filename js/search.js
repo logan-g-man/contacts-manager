@@ -15,12 +15,12 @@ function readCookie() {
   window.lastName = userData.lastName;
   window.userId = userData.userId;
 
-  if (window.userId < 0) {
-    window.location.href = "index.html";
-  } else {
-    document.getElementById("userName").innerHTML =
-      `Logged in as ${firstName} ${lastName}`;
-  }
+  // if (window.userId < 0) {
+  //   window.location.href = "index.html";
+  // } else {
+  //   document.getElementById("userName").innerHTML =
+  //     `Logged in as ${firstName} ${lastName}`;
+  // }
 }
 
 function doLogout() {
