@@ -1,5 +1,5 @@
 import { URL_BASE, EXTENSION } from "./global.js";
-import { searchContact } from "./search.js";
+import { searchContact, getAllContacts } from "./search.js";
 
 export function createContactCard(contact) {
   const contactCard = document.createElement("div");

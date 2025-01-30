@@ -29,7 +29,7 @@ function doLogout() {
 }
 
 // Fetch and display all contacts for the logged-in user
-async function getAllContacts(userId) {
+export async function getAllContacts(userId) {
   const url = `${URL_BASE}/get_contacts.${EXTENSION}`;
   const jsonPayload = JSON.stringify({ userID: userId });
 
