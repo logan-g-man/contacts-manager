@@ -15,12 +15,7 @@ function readCookie() {
   window.lastName = userData.lastName;
   window.userId = userData.userId;
 
-  // if (window.userId < 0) {
-  //   window.location.href = "index.html";
-  // } else {
-  //   document.getElementById("userName").innerHTML =
-  //     `Logged in as ${firstName} ${lastName}`;
-  // }
+
 }
 
 function doLogout() {
@@ -30,24 +25,26 @@ function doLogout() {
 
 // Fetch and display all contacts for the logged-in user
 export async function getAllContacts(userId) {
-  const url = `${URL_BASE}/get_contacts.${EXTENSION}`;
-  const jsonPayload = JSON.stringify({ userID: userId });
+  // const url = `${URL_BASE}/get_contacts.${EXTENSION}`;
+  // const jsonPayload = JSON.stringify({ userID: userId });
 
-  console.log("Fetching contacts for user:", userId);
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: jsonPayload,
-    });
+  // console.log("Fetching contacts for user:", userId);
+  // try {
+  //   const response = await fetch(url, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: jsonPayload,
+  //   });
 
-    const data = (await response.json()).data;
-    displayContacts(data);
-  } catch (err) {
-    console.error("Error fetching all contacts:", err);
-  }
+  //   const data = (await response.json()).data;
+  //   displayContacts(data);
+  // } catch (err) {
+  //   console.error("Error fetching all contacts:", err);
+  // }
+  const contactList = document.getElementById("contactList");
+  contactList.innerHTML = "<strong>Please use the search box to find your contacts.</strong>";
 }
 
 // Search contacts based on the query
