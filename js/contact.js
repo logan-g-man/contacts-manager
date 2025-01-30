@@ -106,17 +106,6 @@ async function addContact(firstName, lastName, email, phone, address, notes) {
 
     if (data.status === "success") {
       console.log("Contact successfully added.");
-
-      // Get the current search query from the search input
-      const searchInput = document.getElementById("searchInput");
-      const query = searchInput.value.trim();
-
-      // Refresh the contact list based on the current query
-      if (query === "") {
-        getAllContacts(userID);  // Load all contacts if no search query
-      } else {
-        searchContact(userID, query);  // Refresh based on current search query
-      }
     } else {
       console.error(`Failed to add contact: ${data.message}`);
       document.getElementById("contactAddResult").innerHTML = data.message;
@@ -126,8 +115,6 @@ async function addContact(firstName, lastName, email, phone, address, notes) {
     document.getElementById("contactAddResult").innerHTML = "An unexpected error occurred while adding the contact.";
   }
 }
-
-
 
 async function updateContact(contactId, firstName, lastName, email, phone, address, notes) {
   const userID = getUserId(); // Retrieve user ID from localStorage
@@ -164,17 +151,6 @@ async function updateContact(contactId, firstName, lastName, email, phone, addre
 
     if (data.status === "success") {
       console.log(`Contact ID ${contactId} successfully updated.`);
-
-      // Get the current search query from the search input
-      const searchInput = document.getElementById("searchInput");
-      const query = searchInput.value.trim();
-
-      // Refresh the contact list based on the current query
-      if (query === "") {
-        getAllContacts(userID);  // Load all contacts if no search query
-      } else {
-        searchContact(userID, query);  // Refresh based on current search query
-      }
     } else {
       console.error(`Failed to update contact: ${data.message}`);
       document.getElementById("contactAddResult").innerHTML = data.message;
@@ -269,7 +245,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const notesValue = notes.value || '';
 
     if (e.target.dataset.mode === "edit") {
-      // Call updateContact() if in edit mode
       await updateContact(
         e.target.dataset.contactId,
         firstName.value,
@@ -280,7 +255,6 @@ document.addEventListener("DOMContentLoaded", () => {
         notesValue
       );
     } else {
-      // Call addContact() if in add mode
       await addContact(
         firstName.value,
         lastName.value,
@@ -291,9 +265,15 @@ document.addEventListener("DOMContentLoaded", () => {
       );
     }
 
-    // Close dialog after submission and refresh contacts
+    // Close the dialog after submission
     addContactDialog.style.display = "none";
-    searchContact(userID, "");  // Refresh contact list
+
+    // Get the current search query
+    const searchInput = document.getElementById("searchInput");
+    const query = searchInput.value.trim();
+
+    // Trigger the search only once
+    searchContact(userID, query);
   });
 
 
