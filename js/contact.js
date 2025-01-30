@@ -71,13 +71,13 @@ function getUserId() {
 }
 
 async function addContact(firstName, lastName, email, phone, address, notes) {
-
   const userID = getUserId(); // Retrieve user ID from localStorage
 
   if (!userID) {
     document.getElementById("contactAddResult").innerHTML = "User ID not found. Please log in again.";
     return;
   }
+
   const tmp = {
     firstName,
     lastName,
@@ -85,10 +85,10 @@ async function addContact(firstName, lastName, email, phone, address, notes) {
     phone,
     address,
     notes,
-    userID, // Ensure this is set properly.
+    userID,
   };
   const jsonPayload = JSON.stringify(tmp);
-  console.log(jsonPayload);
+
   const url = `${URL_BASE}/create_contact.${EXTENSION}`;
 
   try {
@@ -101,19 +101,33 @@ async function addContact(firstName, lastName, email, phone, address, notes) {
     });
 
     const data = await response.json();
-    console.log(data.message);
-    if (data.status !== "success") {
-      console.log("It was actually a success");
-      document.getElementById("contactAddResult").innerHTML = data.message || "Error adding contact.";
+
+    if (data.status === "success") {
+      console.log("Contact successfully added.");
+
+      // Get the current search query from the search input
+      const searchInput = document.getElementById("searchInput");
+      const query = searchInput.value.trim();
+
+      // Refresh the contact list based on the current query
+      if (query === "") {
+        getAllContacts(userID);  // Load all contacts if no search query
+      } else {
+        searchContact(userID, query);  // Refresh based on current search query
+      }
+    } else {
+      console.error(`Failed to add contact: ${data.message}`);
+      document.getElementById("contactAddResult").innerHTML = data.message;
     }
   } catch (err) {
-    document.getElementById("contactAddResult").innerHTML = err.message;
+    console.error("Error adding contact:", err);
+    document.getElementById("contactAddResult").innerHTML = "An unexpected error occurred while adding the contact.";
   }
 }
 
 
-async function updateContact(contactId, firstName, lastName, email, phone, address, notes) {
 
+async function updateContact(contactId, firstName, lastName, email, phone, address, notes) {
   const userID = getUserId(); // Retrieve user ID from localStorage
 
   if (!userID) {
@@ -145,10 +159,27 @@ async function updateContact(contactId, firstName, lastName, email, phone, addre
     });
 
     const data = await response.json();
-    // Refresh contact list after update
-    searchContact("");
+
+    if (data.status === "success") {
+      console.log(`Contact ID ${contactId} successfully updated.`);
+
+      // Get the current search query from the search input
+      const searchInput = document.getElementById("searchInput");
+      const query = searchInput.value.trim();
+
+      // Refresh the contact list based on the current query
+      if (query === "") {
+        getAllContacts(userID);  // Load all contacts if no search query
+      } else {
+        searchContact(userID, query);  // Refresh based on current search query
+      }
+    } else {
+      console.error(`Failed to update contact: ${data.message}`);
+      document.getElementById("contactAddResult").innerHTML = data.message;
+    }
   } catch (err) {
-    document.getElementById("contactAddResult").innerHTML = err.message;
+    console.error("Error updating contact:", err);
+    document.getElementById("contactAddResult").innerHTML = "An unexpected error occurred while updating the contact.";
   }
 }
 
