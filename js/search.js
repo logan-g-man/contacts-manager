@@ -15,7 +15,7 @@ function readCookie() {
   window.lastName = userData.lastName;
   window.userId = userData.userId;
 
-  if (userId < 0) {
+  if (window.userId < 0) {
     window.location.href = "index.html";
   } else {
     document.getElementById("userName").innerHTML =
@@ -51,7 +51,7 @@ async function getAllContacts(userId) {
 }
 
 // Search contacts based on the query
-async function searchContact(userId, query) {
+export async function searchContact(userId, query) {
   const url = `${URL_BASE}/search_contacts.${EXTENSION}`;
   const jsonPayload = JSON.stringify({ userID: userId, query });
 

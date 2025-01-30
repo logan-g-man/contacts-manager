@@ -175,7 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Handle form submission
   addContactForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-
+    const userID = getUserId();
     const { firstName, lastName, email, phone, address, notes } = e.target;
 
     // Validate required fields
@@ -210,7 +210,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     addContactDialog.style.display = "none";  // Close dialog after submission
-    searchContact("");  // Refresh contact list
+    searchContact(userID, "");  // Refresh contact list
   });
 
 
