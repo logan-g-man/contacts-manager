@@ -8,6 +8,7 @@ export function createContactCard(contact) {
       <p>Email: ${contact.Email}</p>
       <p>Phone: ${contact.Phone}</p>
       <p>Address: ${contact.Address}</p>
+      <p><strong>Notes:</strong> ${contact.Notes || "No notes available"}</p>
     </div>
     <div class="contact-actions">
       <button class="edit-btn">
@@ -45,30 +46,45 @@ function openContactDialog(contact = null) {
     form.lastName.value = contact.LastName;
     form.email.value = contact.Email;
     form.phone.value = contact.Phone;
+    form.notes.value = contact.Notes || "";
     form.dataset.mode = "edit";
-    form.dataset.contactId = contact.Id;
+    form.dataset.contactId = contact.ID;
   } else {
     dialogTitle.textContent = "Add New Contact";
     submitBtn.textContent = "Add Contact";
     form.reset();
-    form.dataset.mode = "add";
     delete form.dataset.contactId;
   }
 
   dialog.style.display = "block";
 }
 
-async function addContact(firstName, lastName, email, phone) {
+// Utility function to get the user ID from localStorage
+function getUserId() {
+  const userData = localStorage.getItem("userData");
+  return userData ? JSON.parse(userData).userId : null;
+}
+
+async function addContact(firstName, lastName, email, phone, address, notes) {
+
+  const userId = getUserId(); // Retrieve user ID from localStorage
+
+  if (!userId) {
+    document.getElementById("contactAddResult").innerHTML = "User ID not found. Please log in again.";
+    return;
+  }
   const tmp = {
     firstName,
     lastName,
     email,
     phone,
-    userId,
+    address,
+    notes,
+    userId, // Ensure this is set properly.
   };
   const jsonPayload = JSON.stringify(tmp);
 
-  const url = `${URL_BASE}/AddUser.${EXTENSION}`;
+  const url = `${URL_BASE}/create_contact.${EXTENSION}`;
 
   try {
     const response = await fetch(url, {
@@ -80,23 +96,37 @@ async function addContact(firstName, lastName, email, phone) {
     });
 
     const data = await response.json();
+    if (data.status !== "success") {
+      document.getElementById("contactAddResult").innerHTML = data.message || "Error adding contact.";
+    }
   } catch (err) {
     document.getElementById("contactAddResult").innerHTML = err.message;
   }
 }
 
-async function updateContact(contactId, firstName, lastName, email, phone) {
+
+async function updateContact(contactId, firstName, lastName, email, phone, address, notes) {
+
+  const userId = getUserId(); // Retrieve user ID from localStorage
+
+  if (!userId) {
+    document.getElementById("contactAddResult").innerHTML = "User ID not found. Please log in again.";
+    return;
+  }
+
   const tmp = {
     id: contactId,
     firstName,
     lastName,
     email,
     phone,
+    address,
+    notes,
     userId,
   };
   const jsonPayload = JSON.stringify(tmp);
 
-  const url = `${URL_BASE}/UpdateContact.${EXTENSION}`;
+  const url = `${URL_BASE}/update_contact.${EXTENSION}`;
 
   try {
     const response = await fetch(url, {
@@ -114,6 +144,7 @@ async function updateContact(contactId, firstName, lastName, email, phone) {
     document.getElementById("contactAddResult").innerHTML = err.message;
   }
 }
+
 
 function removeContact(contact) {
   // Implement removeContact or reference existing remove logic
@@ -139,7 +170,18 @@ document.addEventListener("DOMContentLoaded", () => {
   // Handle form submission
   addContactForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const { firstName, lastName, email, phone } = e.target;
+
+    const { firstName, lastName, email, phone, address, notes } = e.target;
+
+    // Validate required fields
+    if (!firstName.value || !lastName.value || !email.value || !phone.value) {
+      document.getElementById("contactAddResult").innerHTML = "All required fields must be filled.";
+      return;
+    }
+
+    // Set default values for optional fields
+    const addressValue = address.value || '';
+    const notesValue = notes.value || '';
 
     if (e.target.dataset.mode === "edit") {
       await updateContact(
@@ -148,6 +190,8 @@ document.addEventListener("DOMContentLoaded", () => {
         lastName.value,
         email.value,
         phone.value,
+        addressValue,
+        notesValue
       );
     } else {
       await addContact(
@@ -155,10 +199,15 @@ document.addEventListener("DOMContentLoaded", () => {
         lastName.value,
         email.value,
         phone.value,
+        addressValue,
+        notesValue
       );
     }
 
-    addContactDialog.style.display = "none";
-    searchContact(""); // Refresh contact list
+    addContactDialog.style.display = "none";  // Close dialog after submission
+    searchContact("");  // Refresh contact list
   });
+
+
+
 });
