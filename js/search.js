@@ -72,11 +72,15 @@ export async function searchContact(userId, query) {
   }
 }
 // Display contacts on the page
-function displayContacts(contacts = []) {
+function displayContacts(contacts) {
   const contactList = document.getElementById("contactList");
-  contactList.innerHTML = contacts.length ? "" : "No contact found!";
 
-  for (const contact of contacts) {
+  // Ensure contacts is an array even if the API returns null/undefined
+  const safeContacts = Array.isArray(contacts) ? contacts : [];
+
+  contactList.innerHTML = safeContacts.length ? "" : "No contact found!";
+
+  for (const contact of safeContacts) {
     const newContactCard = createContactCard(contact);
     contactList.appendChild(newContactCard);
   }
