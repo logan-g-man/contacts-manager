@@ -31,6 +31,7 @@ export function createContactCard(contact) {
 
   contactCard.querySelector(".edit-btn").addEventListener("click", () => {
     openContactDialog(contact);
+    console.log(contact.ID);
   });
 
   return contactCard;
@@ -49,6 +50,7 @@ function openContactDialog(contact = null) {
     form.lastName.value = contact.LastName;
     form.email.value = contact.Email;
     form.phone.value = contact.Phone;
+    form.address.value = contact.Address || "";
     form.notes.value = contact.Notes || "";
     form.dataset.mode = "edit";
     form.dataset.contactId = contact.ID;
@@ -120,14 +122,14 @@ async function updateContact(contactId, firstName, lastName, email, phone, addre
   }
 
   const tmp = {
-    id: contactId,
+    contactID: contactId,
     firstName,
     lastName,
     email,
     phone,
     address,
     notes,
-    userId,
+    userID,
   };
   const jsonPayload = JSON.stringify(tmp);
 
@@ -151,10 +153,42 @@ async function updateContact(contactId, firstName, lastName, email, phone, addre
 }
 
 
-function removeContact(contact) {
-  // Implement removeContact or reference existing remove logic
-  // ...existing code...
+async function removeContact(contact) {
+  const userID = getUserId(); // Retrieve user ID from localStorage
+
+  if (!userID) {
+    document.getElementById("contactAddResult").innerHTML = "User ID not found. Please log in again.";
+    return;
+  }
+  const contactId = contact.ID;  // The contact ID to delete
+
+  const url = `${URL_BASE}/delete_contact.${EXTENSION}`;
+  const jsonPayload = JSON.stringify({ userID: userID, contactID: contactId });
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: jsonPayload,
+    });
+
+    const data = await response.json();
+
+    if (data.status === "success") {
+      console.log(`Contact ID ${contactId} successfully deleted.`);
+      document.getElementById("contactList").removeChild(document.getElementById(`contact-${contactId}`));
+    } else {
+      console.error(`Failed to delete contact: ${data.message}`);
+      alert(`Error: ${data.message}`);
+    }
+  } catch (err) {
+    console.error("Error deleting contact:", err);
+    alert("An unexpected error occurred while deleting the contact.");
+  }
 }
+
 
 document.addEventListener("DOMContentLoaded", () => {
   const addContactBtn = document.getElementById("addContactBtn");
