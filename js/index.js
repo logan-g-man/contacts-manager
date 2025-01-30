@@ -5,9 +5,9 @@ function saveCookie(firstName, lastName, userId) {
     firstName,
     lastName,
     userId,
-    expiresAt: new Date().getTime() + (20 * 60 * 1000) // 20 minutes
+    expiresAt: new Date().getTime() + 20 * 60 * 1000, // 20 minutes
   };
-  localStorage.setItem('userData', JSON.stringify(userData));
+  localStorage.setItem("userData", JSON.stringify(userData));
 }
 
 async function doLogin(username, password) {
@@ -17,14 +17,14 @@ async function doLogin(username, password) {
   const jsonPayload = JSON.stringify(tmp);
 
   try {
-    const response = await fetch(`${URL_BASE}/Login.${EXTENSION}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: jsonPayload,
-    });
-
+    // const response = await fetch(`${URL_BASE}/Login.${EXTENSION}`, {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: jsonPayload,
+    // });
+    //
     //Disable for now
     // const data = await response.json();
     // if (userId < 1) {

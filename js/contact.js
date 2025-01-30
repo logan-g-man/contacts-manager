@@ -1,6 +1,10 @@
+import { URL_BASE, EXTENSION } from "./global.js";
+
 export function createContactCard(contact) {
+  console.log(contact);
   const contactCard = document.createElement("div");
   contactCard.className = "contact-card";
+  contactCard.dataset.contactId = contact.ID;
 
   contactCard.innerHTML = `
     <div class="contact-info">
@@ -32,7 +36,7 @@ export function createContactCard(contact) {
   return contactCard;
 }
 
-function openContactDialog(contact = null) {
+function openContactDialog(contact) {
   const dialog = document.getElementById("addContactDialog");
   const form = document.getElementById("addContactForm");
   const dialogTitle = dialog.querySelector("h2");
@@ -46,7 +50,7 @@ function openContactDialog(contact = null) {
     form.email.value = contact.Email;
     form.phone.value = contact.Phone;
     form.dataset.mode = "edit";
-    form.dataset.contactId = contact.Id;
+    form.dataset.contactId = contact.ID;
   } else {
     dialogTitle.textContent = "Add New Contact";
     submitBtn.textContent = "Add Contact";
@@ -58,17 +62,9 @@ function openContactDialog(contact = null) {
   dialog.style.display = "block";
 }
 
-async function addContact(firstName, lastName, email, phone) {
-  const tmp = {
-    firstName,
-    lastName,
-    email,
-    phone,
-    userId,
-  };
-  const jsonPayload = JSON.stringify(tmp);
-
-  const url = `${URL_BASE}/AddUser.${EXTENSION}`;
+async function addContact(contact) {
+  const jsonPayload = JSON.stringify(contact);
+  const url = `${URL_BASE}/add_contact.${EXTENSION}`;
 
   try {
     const response = await fetch(url, {
@@ -80,23 +76,27 @@ async function addContact(firstName, lastName, email, phone) {
     });
 
     const data = await response.json();
+    const status = data.status;
+
+    if (status !== "success") {
+      throw new Error(data.message);
+    }
+
+    // Add the new contact card to the list
+    const contactList = document.getElementById("contactList");
+    contactList.appendChild(createContactCard(contact));
+
+    return data;
   } catch (err) {
-    document.getElementById("contactAddResult").innerHTML = err.message;
+    console.error(err);
+    throw err;
   }
 }
 
-async function updateContact(contactId, firstName, lastName, email, phone) {
-  const tmp = {
-    id: contactId,
-    firstName,
-    lastName,
-    email,
-    phone,
-    userId,
-  };
-  const jsonPayload = JSON.stringify(tmp);
-
-  const url = `${URL_BASE}/UpdateContact.${EXTENSION}`;
+async function updateContact(contact) {
+  console.log(contact);
+  const jsonPayload = JSON.stringify(contact);
+  const url = `${URL_BASE}/update_contact.${EXTENSION}`;
 
   try {
     const response = await fetch(url, {
@@ -108,14 +108,28 @@ async function updateContact(contactId, firstName, lastName, email, phone) {
     });
 
     const data = await response.json();
-    // Refresh contact list after update
-    searchContact("");
+    const status = data.status;
+    if (status !== "success") {
+      throw new Error(data.message);
+    }
+
+    // Find and update the specific contact card
+    const existingCard = document.querySelector(
+      `.contact-card[data-contact-id="${contact.contactID}"]`,
+    );
+
+    if (existingCard) {
+      const newCard = createContactCard(contact);
+      existingCard.replaceWith(newCard);
+    }
   } catch (err) {
-    document.getElementById("contactAddResult").innerHTML = err.message;
+    console.error(err);
   }
 }
 
 function removeContact(contact) {
+  const jsonPayload = JSON.stringify(contact);
+  const url = `${URL_BASE}/update_contact.${EXTENSION}`;
   // Implement removeContact or reference existing remove logic
   // ...existing code...
 }
@@ -141,24 +155,34 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
     const { firstName, lastName, email, phone } = e.target;
 
-    if (e.target.dataset.mode === "edit") {
-      await updateContact(
-        e.target.dataset.contactId,
-        firstName.value,
-        lastName.value,
-        email.value,
-        phone.value,
-      );
-    } else {
-      await addContact(
-        firstName.value,
-        lastName.value,
-        email.value,
-        phone.value,
-      );
-    }
+    console.log(e.target.dataset);
+    try {
+      if (e.target.dataset.mode === "edit") {
+        await updateContact({
+          id: 6,
+          firstName: firstName.value,
+          lastName: lastName.value,
+          email: email.value,
+          phone: phone.value,
+          contactID: e.target.dataset.contactId,
+        });
+      } else {
+        const newContact = {
+          userID: JSON.parse(localStorage.getItem("user")).id, // Get userID from logged in user
+          firstName: firstName.value,
+          lastName: lastName.value,
+          email: email.value,
+          phone: phone.value,
+          address: "", // Optional field
+          notes: "", // Optional field
+        };
+        await addContact(newContact);
+      }
 
-    addContactDialog.style.display = "none";
-    searchContact(""); // Refresh contact list
+      addContactDialog.style.display = "none";
+      e.target.reset();
+    } catch (err) {
+      document.getElementById("contactAddResult").innerHTML = err.message;
+    }
   });
 });
