@@ -14,8 +14,6 @@ function readCookie() {
   window.firstName = userData.firstName;
   window.lastName = userData.lastName;
   window.userId = userData.userId;
-
-
 }
 
 function doLogout() {
@@ -44,7 +42,8 @@ export async function getAllContacts(userId) {
   //   console.error("Error fetching all contacts:", err);
   // }
   const contactList = document.getElementById("contactList");
-  contactList.innerHTML = "<strong>Please use the search box to find your contacts.</strong>";
+  contactList.innerHTML =
+    "<strong>Please use the search box to find your contacts.</strong>";
 }
 
 // Search contacts based on the query
@@ -106,4 +105,3 @@ document.addEventListener("DOMContentLoaded", () => {
     window.location.href = "index.html";
   }
 });
-
