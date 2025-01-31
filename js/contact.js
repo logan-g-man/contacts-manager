@@ -2,8 +2,10 @@ import { URL_BASE, EXTENSION } from "./global.js";
 import { searchContact, getAllContacts } from "./search.js";
 
 export function createContactCard(contact) {
+  console.log(contact);
   const contactCard = document.createElement("div");
   contactCard.className = "contact-card";
+  contactCard.dataset.contactId = contact.ID;
 
   contactCard.innerHTML = `
     <div class="contact-info">
@@ -37,7 +39,7 @@ export function createContactCard(contact) {
   return contactCard;
 }
 
-function openContactDialog(contact = null) {
+function openContactDialog(contact) {
   const dialog = document.getElementById("addContactDialog");
   const form = document.getElementById("addContactForm");
   const dialogTitle = dialog.querySelector("h2");
@@ -52,19 +54,18 @@ function openContactDialog(contact = null) {
     form.phone.value = contact.Phone;
     form.address.value = contact.Address || "";
     form.notes.value = contact.Notes || "";
-    form.dataset.mode = "edit";  // Set to edit mode
-    form.dataset.contactId = contact.ID;  // Store the contact ID for updating
+    form.dataset.mode = "edit"; // Set to edit mode
+    form.dataset.contactId = contact.ID; // Store the contact ID for updating
   } else {
     dialogTitle.textContent = "Add New Contact";
     submitBtn.textContent = "Add Contact";
     form.reset();
-    form.dataset.mode = "add";  // Reset to add mode
-    delete form.dataset.contactId;  // Clear any leftover contact ID
+    form.dataset.mode = "add"; // Reset to add mode
+    delete form.dataset.contactId; // Clear any leftover contact ID
   }
 
   dialog.style.display = "block";
 }
-
 
 // Utility function to get the user ID from localStorage
 function getUserId() {
@@ -76,7 +77,8 @@ async function addContact(firstName, lastName, email, phone, address, notes) {
   const userID = getUserId(); // Retrieve user ID from localStorage
 
   if (!userID) {
-    document.getElementById("contactAddResult").innerHTML = "User ID not found. Please log in again.";
+    document.getElementById("contactAddResult").innerHTML =
+      "User ID not found. Please log in again.";
     return;
   }
 
@@ -112,15 +114,25 @@ async function addContact(firstName, lastName, email, phone, address, notes) {
     }
   } catch (err) {
     console.error("Error adding contact:", err);
-    document.getElementById("contactAddResult").innerHTML = "An unexpected error occurred while adding the contact.";
+    document.getElementById("contactAddResult").innerHTML =
+      "An unexpected error occurred while adding the contact.";
   }
 }
 
-async function updateContact(contactId, firstName, lastName, email, phone, address, notes) {
+async function updateContact(
+  contactId,
+  firstName,
+  lastName,
+  email,
+  phone,
+  address,
+  notes,
+) {
   const userID = getUserId(); // Retrieve user ID from localStorage
 
   if (!userID) {
-    document.getElementById("contactAddResult").innerHTML = "User ID not found. Please log in again.";
+    document.getElementById("contactAddResult").innerHTML =
+      "User ID not found. Please log in again.";
     return;
   }
 
@@ -157,20 +169,21 @@ async function updateContact(contactId, firstName, lastName, email, phone, addre
     }
   } catch (err) {
     console.error("Error updating contact:", err);
-    document.getElementById("contactAddResult").innerHTML = "An unexpected error occurred while updating the contact.";
+    document.getElementById("contactAddResult").innerHTML =
+      "An unexpected error occurred while updating the contact.";
   }
 }
-
 
 async function removeContact(contact) {
   const userID = getUserId(); // Retrieve user ID from localStorage
 
   if (!userID) {
-    document.getElementById("contactAddResult").innerHTML = "User ID not found. Please log in again.";
+    document.getElementById("contactAddResult").innerHTML =
+      "User ID not found. Please log in again.";
     return;
   }
 
-  const contactId = contact.ID;  // The contact ID to delete
+  const contactId = contact.ID; // The contact ID to delete
 
   const url = `${URL_BASE}/delete_contact.${EXTENSION}`;
   const jsonPayload = JSON.stringify({ userID: userID, contactID: contactId });
@@ -195,11 +208,10 @@ async function removeContact(contact) {
 
       // Refresh the contact list based on the current query
       if (query === "") {
-        getAllContacts(userID);  // If no search query, load all contacts
+        getAllContacts(userID); // If no search query, load all contacts
       } else {
-        searchContact(userID, query);  // Otherwise, refresh based on search query
+        searchContact(userID, query); // Otherwise, refresh based on search query
       }
-
     } else {
       console.error(`Failed to delete contact: ${data.message}`);
       alert(`Error: ${data.message}`);
@@ -209,8 +221,6 @@ async function removeContact(contact) {
     alert("An unexpected error occurred while deleting the contact.");
   }
 }
-
-
 
 document.addEventListener("DOMContentLoaded", () => {
   const addContactBtn = document.getElementById("addContactBtn");
@@ -236,13 +246,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Validate required fields
     if (!firstName.value || !lastName.value || !email.value || !phone.value) {
-      document.getElementById("contactAddResult").innerHTML = "All required fields must be filled.";
+      document.getElementById("contactAddResult").innerHTML =
+        "All required fields must be filled.";
       return;
     }
 
     // Set default values for optional fields
-    const addressValue = address.value || '';
-    const notesValue = notes.value || '';
+    const addressValue = address.value || "";
+    const notesValue = notes.value || "";
 
     if (e.target.dataset.mode === "edit") {
       await updateContact(
@@ -252,7 +263,7 @@ document.addEventListener("DOMContentLoaded", () => {
         email.value,
         phone.value,
         addressValue,
-        notesValue
+        notesValue,
       );
     } else {
       await addContact(
@@ -261,7 +272,7 @@ document.addEventListener("DOMContentLoaded", () => {
         email.value,
         phone.value,
         addressValue,
-        notesValue
+        notesValue,
       );
     }
 
@@ -275,7 +286,4 @@ document.addEventListener("DOMContentLoaded", () => {
     // Trigger the search only once
     searchContact(userID, query);
   });
-
-
-
 });

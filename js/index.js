@@ -52,7 +52,6 @@
 //   });
 // });
 
-
 import { URL_BASE, EXTENSION } from "./global.js";
 
 function saveCookie(firstName, lastName, userId) {
@@ -60,9 +59,9 @@ function saveCookie(firstName, lastName, userId) {
     firstName,
     lastName,
     userId,
-    expiresAt: new Date().getTime() + (20 * 60 * 1000) // 20 minutes
+    expiresAt: new Date().getTime() + 20 * 60 * 1000, // 20 minutes
   };
-  localStorage.setItem('userData', JSON.stringify(userData));
+  localStorage.setItem("userData", JSON.stringify(userData));
 }
 
 async function doLogin(username, password) {
@@ -83,18 +82,19 @@ async function doLogin(username, password) {
     const data = await response.json();
 
     // Handle response and validate user login
-    if (response.ok && data.status === 'success') {
+    if (response.ok && data.status === "success") {
       const { firstName, lastName, id: userId } = data.data;
       saveCookie(firstName, lastName, userId); // Save user data
       document.getElementById("loginResult").innerHTML = "Login successful!";
       window.location.href = "search.html"; // Redirect to dashboard
     } else {
-      document.getElementById("loginResult").innerHTML = data.message || "User/Password combination incorrect";
+      document.getElementById("loginResult").innerHTML =
+        data.message || "User/Password combination incorrect";
     }
-
   } catch (err) {
     console.error("Failed to log in:", err);
-    document.getElementById("loginResult").innerHTML = "An error occurred. Please try again.";
+    document.getElementById("loginResult").innerHTML =
+      "An error occurred. Please try again.";
   }
 }
 

@@ -11,21 +11,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
+// Loading dependencies relating to the DbConection instead of using hard-coded values
+
+require_once __DIR__ . '/DbConnection.php';
+
 // Parse the incoming request
 function getRequestInfo()
 {
     // Get raw input
     $input = file_get_contents('php://input');
-    error_log("Raw Input: " . $input);
+    error_log('Raw Input: ' . $input);
 
     // Decode JSON input
     $data = json_decode($input, true);
     if (json_last_error() !== JSON_ERROR_NONE) {
-        error_log("JSON Decode Error: " . json_last_error_msg());
+        error_log('JSON Decode Error: ' . json_last_error_msg());
         return [];
     }
 
-    error_log("Parsed Input: " . json_encode($data));
+    error_log('Parsed Input: ' . json_encode($data));
     return $data;
 }
 
@@ -48,19 +52,15 @@ if (!isset($inData['firstName']) || !isset($inData['lastName']) || !isset($inDat
     sendResponse('error', 'Missing required fields: firstName, lastName, login, or password');
 }
 
-// Connect to the database
-$conn = new mysqli('localhost', 'TheBeast', 'WeLoveCOP4331', 'COP4331');
+// Connect to the database USING env variables instead of hard-coded source code configs
+$conn = getConnection();
 
-// Check connection
-if ($conn->connect_error) {
-    error_log("Database Connection Error: " . $conn->connect_error);
-    sendResponse('error', 'Database connection failed: ' . $conn->connect_error);
-}
+// Error checking already exists within call
 
 // Check if the user already exists
 $stmt = $conn->prepare('SELECT ID FROM Users WHERE Login = ?');
 if (!$stmt) {
-    error_log("SQL Prepare Error: " . $conn->error);
+    error_log('SQL Prepare Error: ' . $conn->error);
     sendResponse('error', 'SQL preparation error: ' . $conn->error);
 }
 $stmt->bind_param('s', $inData['login']);
@@ -68,15 +68,19 @@ $stmt->execute();
 $stmt->store_result();
 
 if ($stmt->num_rows > 0) {
-    error_log("Duplicate User: " . $inData['login']);
+    error_log('Duplicate User: ' . $inData['login']);
     sendResponse('error', 'User with this login already exists');
 }
 $stmt->close();
 
+// HASHING PASSWORD BEFORE STORING IT WITHIN THE DB FOR SECURITY PURPOSES
+
+$hashPassword = password_hash($inData['password'], PASSWORD_BCRYPT);
+
 // Insert the new user into the database
 $stmt = $conn->prepare('INSERT INTO Users (FirstName, LastName, Login, Password) VALUES (?, ?, ?, ?)');
 if (!$stmt) {
-    error_log("SQL Prepare Error: " . $conn->error);
+    error_log('SQL Prepare Error: ' . $conn->error);
     sendResponse('error', 'SQL preparation error: ' . $conn->error);
 }
 $stmt->bind_param(
@@ -84,14 +88,16 @@ $stmt->bind_param(
     $inData['firstName'],
     $inData['lastName'],
     $inData['login'],
-    $inData['password']
+    $hashPassword,  // Storing Hashed password versus hard-coded one
+    $inData['email'],
+    $inData['phone']
 );
 
 if ($stmt->execute()) {
-    error_log("User Registered: " . $inData['login']);
+    error_log('User Registered: ' . $inData['login']);
     sendResponse('success', 'User successfully registered');
 } else {
-    error_log("Insert Error: " . $stmt->error);
+    error_log('Insert Error: ' . $stmt->error);
     sendResponse('error', 'Failed to register user: ' . $stmt->error);
 }
 
