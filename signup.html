@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="css/global.css" />
+    <link rel="stylesheet" href="css/auth.css" />
+  </head>
+  <body class="body">
+    <div class="container-auth">
+      <form id="signupForm" class="auth-form">
+        <h2>Sign Up</h2>
+        <div class="form-group">
+          <label for="newUsername">Username:</label>
+          <input type="text" id="newUsername" name="newUsername" required />
+        </div>
+        <div class="form-group">
+          <label for="newPassword">Password:</label>
+          <input type="password" id="newPassword" name="newPassword" required />
+        </div>
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password:</label>
+          <input
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            required
+          />
+        </div>
+        <button type="submit">Sign Up</button>
+        <p>Already have an account? <a href="/">Sign In</a></p>
+      </form>
+    </div>
+  </body>
+  <script type="module" src="js/global.js"></script>
+  <script type="module" src="js/signup.js"></script>
+</html>
