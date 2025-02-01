@@ -70,7 +70,7 @@ $stmt->close();
 
 // HASHING PASSWORD BEFORE STORING IT WITHIN THE DB FOR SECURITY PURPOSES
 
-$hashPassword = password_hash($inData['password'], PASSWORD_BCRYPT);
+$hashPassword = password_hash($inData['password'], PASSWORD_DEFAULT);
 error_log('Hashed password: ' . $hashPassword);
 // Insert the new user into the database
 $stmt = $conn->prepare('INSERT INTO Users (FirstName, LastName, Login, Password) VALUES (?, ?, ?, ?)');
@@ -83,7 +83,7 @@ $stmt->bind_param(
     $inData['firstName'],
     $inData['lastName'],
     $inData['login'],
-    $hashPassword,  // Storing Hashed password versus hard-coded one
+    $hashPassword  // Storing Hashed password versus hard-coded one
 );
 
 if ($stmt->execute()) {
