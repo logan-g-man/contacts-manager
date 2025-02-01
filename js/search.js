@@ -93,4 +93,6 @@ document.addEventListener("DOMContentLoaded", () => {
       searchContact(userData.userId, query);
     }
   });
+  const logoutBtn = document.getElementById("logoutBtn");
+  logoutBtn.addEventListener("click", doLogout);
 });
