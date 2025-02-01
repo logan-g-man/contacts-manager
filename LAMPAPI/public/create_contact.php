@@ -1,6 +1,6 @@
 <?php
 // Enable CORS
-require_once 'DbConnection.php';
+require_once '../DbConnection.php';
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
