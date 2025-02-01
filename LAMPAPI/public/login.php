@@ -1,5 +1,5 @@
 <?php
-require_once '../DbConnection.php';
+require_once 'DbConnection.php';
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
@@ -59,30 +59,41 @@ if ($conn->connect_error) {
 }
 
 // Prepare and execute the SQL query
-$stmt = $conn->prepare('SELECT ID, FirstName, LastName FROM Users WHERE Login = ? AND Password = ?');
+$stmt = $conn->prepare('SELECT ID, FirstName, LastName, Password FROM Users WHERE login = ?');
 if (!$stmt) {
     error_log('SQL Prepare Error: ' . $conn->error);
     sendResponse('error', 'SQL preparation error: ' . $conn->error);
 }
 
-$stmt->bind_param('ss', $inData['login'], $inData['password']);
+$stmt->bind_param('s', $inData['login']);
 $stmt->execute();
 $result = $stmt->get_result();
 
 // Check for matching user
 if ($row = $result->fetch_assoc()) {
-    error_log('User Found: ' . json_encode($row));
-    sendResponse('success', 'Login successful', [
-        'id' => $row['ID'],
-        'firstName' => $row['FirstName'],
-        'lastName' => $row['LastName'],
-    ]);
+    $storedPassword = $row['Password']; //  hashed password from DB
+
+
+    if (empty($storedPassword) || password_get_info($storedPassword)['algo'] === 0) {
+        sendResponse('error', 'Invalid login or password');
+    }
+
+    // VERIFY HASHED PASSWORD
+    if (password_verify($inData['password'], $storedPassword)) {
+        sendResponse('success', 'Login successful', [
+            'id' => $row['ID'],
+            'firstName' => $row['FirstName'],
+            'lastName' => $row['LastName'],
+        ]);
+    } else {
+        sendResponse('error', 'Invalid login or password');
+    }
 } else {
-    error_log('Invalid Login: ' . $inData['login']);
-    sendResponse('error', 'Invalid login or password');
+    sendResponse('error', 'No Records Found');
 }
 
 // Clean up
 $stmt->close();
 $conn->close();
+
 ?>
