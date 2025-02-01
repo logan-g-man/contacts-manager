@@ -1,10 +1,12 @@
 <?php
 // Enable CORS
+require_once 'DbConnection.php';
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 header('Content-Type: application/json');
 
+$conn = getConnection();
 // Handle preflight requests
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
@@ -37,26 +39,22 @@ if (!isset($inData['userID']) || !isset($inData['query'])) {
     sendResponse('error', 'Missing required fields: userID or query');
 }
 
-// Connect to the database
-$conn = new mysqli('localhost', 'TheBeast', 'WeLoveCOP4331', 'COP4331');
-
 // Check connection
 if ($conn->connect_error) {
     sendResponse('error', 'Database connection failed: ' . $conn->connect_error);
 }
 
-
 $userID = $inData['userID'];
 $query = '%' . $conn->real_escape_string($inData['query']) . '%';
 
 // Prepare the SQL query
-$sql = "SELECT * FROM Contacts WHERE UserID = ? AND (
+$sql = 'SELECT * FROM Contacts WHERE UserID = ? AND (
     FirstName LIKE ? OR
     LastName LIKE ? OR
     Email LIKE ? OR
     Phone LIKE ? OR
     Address LIKE ?
-)";
+)';
 $stmt = $conn->prepare($sql);
 if (!$stmt) {
     sendResponse('error', 'SQL preparation error: ' . $conn->error);

@@ -1,9 +1,10 @@
 <?php
-// Enable CORS
+require_once 'DbConnection.php';
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
-header('Content-Type: application/json');
+header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
+
+$conn = getConnection();
 
 // Handle preflight requests
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -37,9 +38,6 @@ if (!isset($inData['contactID']) || !isset($inData['userID'])) {
     sendResponse('error', 'Missing required fields: contactID or userID');
 }
 
-// Connect to the database
-$conn = new mysqli('localhost', 'TheBeast', 'WeLoveCOP4331', 'COP4331');
-
 // Check connection
 if ($conn->connect_error) {
     sendResponse('error', 'Database connection failed: ' . $conn->connect_error);
@@ -66,7 +64,7 @@ foreach ($allowedFields as $field) {
     if (isset($inData[$field])) {
         $fields[] = "$field = ?";
         $params[] = $inData[$field];
-        $types .= 's'; // All fields are strings
+        $types .= 's';  // All fields are strings
     }
 }
 
@@ -74,13 +72,11 @@ if (empty($fields)) {
     sendResponse('error', 'No fields provided for update');
 }
 
-
 $params[] = $inData['contactID'];
 $params[] = $inData['userID'];
 $types .= 'ii';
 
-
-$sql = "UPDATE Contacts SET " . implode(', ', $fields) . " WHERE ID = ? AND UserID = ?";
+$sql = 'UPDATE Contacts SET ' . implode(', ', $fields) . ' WHERE ID = ? AND UserID = ?';
 $stmt = $conn->prepare($sql);
 
 if (!$stmt) {
