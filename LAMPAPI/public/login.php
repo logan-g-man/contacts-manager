@@ -74,7 +74,7 @@ if ($row = $result->fetch_assoc()) {
     $storedPassword = $row['Password']; //  hashed password from DB
 
 
-    if (empty($storedPassword) || password_get_info($storedPassword)['algo'] === 0) {
+    if (empty($storedPassword)) {
         sendResponse('error', 'Invalid login or password');
     }
 
