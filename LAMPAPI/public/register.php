@@ -1,6 +1,6 @@
 <?php
 // Enable CORS
-require_once 'DbConnection.php';
+require_once '../DbConnection.php';
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
@@ -71,7 +71,7 @@ $stmt->close();
 // HASHING PASSWORD BEFORE STORING IT WITHIN THE DB FOR SECURITY PURPOSES
 
 $hashPassword = password_hash($inData['password'], PASSWORD_BCRYPT);
-
+error_log('Hashed password: ' . $inData['login']);
 // Insert the new user into the database
 $stmt = $conn->prepare('INSERT INTO Users (FirstName, LastName, Login, Password) VALUES (?, ?, ?, ?)');
 if (!$stmt) {
