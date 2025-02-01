@@ -45,11 +45,15 @@ $inData = getRequestInfo();
 
 // Validate input
 if (
-    !isset($inData['userID']) || !isset($inData['firstName']) || !isset($inData['lastName']) ||
-    !isset($inData['email']) || !isset($inData['phone']) || !isset($inData['address']) || !isset($inData['notes'])
+    !isset($inData['userID']) || !isset($inData['firstName']) ||
+    !isset($inData['lastName']) || !isset($inData['email']) || !isset($inData['phone'])
 ) {
-    sendResponse('error', 'Missing required fields: userID, firstName, lastName, email, phone, address, or notes');
+    sendResponse('error', 'Missing required fields: userID, firstName, lastName, email, or phone');
 }
+
+// Set default values if optional fields are missing
+$inData['address'] = isset($inData['address']) ? $inData['address'] : '';
+$inData['notes'] = isset($inData['notes']) ? $inData['notes'] : '';
 
 // Connect to the database
 $conn = new mysqli('localhost', 'TheBeast', 'WeLoveCOP4331', 'COP4331');
