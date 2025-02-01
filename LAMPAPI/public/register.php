@@ -71,7 +71,7 @@ $stmt->close();
 // HASHING PASSWORD BEFORE STORING IT WITHIN THE DB FOR SECURITY PURPOSES
 
 $hashPassword = password_hash($inData['password'], PASSWORD_BCRYPT);
-error_log('Hashed password: ' . $inData['login']);
+error_log('Hashed password: ' . $hashPassword);
 // Insert the new user into the database
 $stmt = $conn->prepare('INSERT INTO Users (FirstName, LastName, Login, Password) VALUES (?, ?, ?, ?)');
 if (!$stmt) {
