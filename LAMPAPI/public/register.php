@@ -84,8 +84,6 @@ $stmt->bind_param(
     $inData['lastName'],
     $inData['login'],
     $hashPassword,  // Storing Hashed password versus hard-coded one
-    $inData['email'],
-    $inData['phone']
 );
 
 if ($stmt->execute()) {
