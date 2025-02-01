@@ -1,4 +1,3 @@
-import { faker } from "https://esm.sh/@faker-js/faker";
 import { URL_BASE, EXTENSION } from "./global.js";
 import { createContactCard } from "./contact.js";
 
@@ -10,10 +9,7 @@ function readCookie() {
     window.location.href = "index.html";
     return;
   }
-
-  window.firstName = userData.firstName;
-  window.lastName = userData.lastName;
-  window.userId = userData.userId;
+  return userData;
 }
 
 function doLogout() {
@@ -80,25 +76,21 @@ function displayContacts(contacts) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  readCookie();
-  console.log("User ID after reading cookie:", window.userId);
-  // Ensure userId is available
-  if (window.userId) {
-    getAllContacts(window.userId);
-
-    const searchInput = document.getElementById("searchInput");
-    const searchBtn = document.getElementById("searchBtn");
-
-    searchBtn.addEventListener("click", () => {
-      const query = searchInput.value.trim();
-      if (query === "") {
-        getAllContacts(window.userId);
-      } else {
-        searchContact(window.userId, query);
-      }
-    });
-  } else {
+  const userData = readCookie();
+  console.log("User ID after reading cookie:", userData.userId);
+  if (!userData.userId) {
     console.error("User ID not found, redirecting to login.");
-    window.location.href = "index.html";
+    userData.location.href = "index.html";
   }
+
+  const searchInput = document.getElementById("searchInput");
+  const searchBtn = document.getElementById("searchBtn");
+  searchBtn.addEventListener("click", () => {
+    const query = searchInput.value.trim();
+    if (query === "") {
+      getAllContacts(userData.userId);
+    } else {
+      searchContact(userData.userId, query);
+    }
+  });
 });
