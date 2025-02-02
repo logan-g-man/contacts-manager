@@ -59,6 +59,14 @@ if ($stmt->num_rows === 0) {
 }
 $stmt->close();
 
+//Delete the contacts first
+$stmt = $conn->prepare('DELETE FROM Contacts WHERE UserID = ?');
+$stmt->bind_param('i', $userID);
+if (!$stmt->execute()) {
+    sendResponse('error', 'Failed to delete user contacts: ' . $stmt->error);
+}
+$stmt->close();
+
 // Delete the user
 $stmt = $conn->prepare('DELETE FROM Users WHERE ID = ?');//only new code I had to write up
 if (!$stmt) {
