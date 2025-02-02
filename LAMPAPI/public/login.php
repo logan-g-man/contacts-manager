@@ -53,6 +53,10 @@ if (!isset($inData['login']) || !isset($inData['password'])) {
     sendResponse('error', 'Missing login or password');
 }
 
+error_log('User-provided login: ' . $inData['login']);
+error_log('User-provided password: ' . $inData['password']);
+
+
 // Check connection
 if ($conn->connect_error) {
     error_log('Database Connection Error: ' . $conn->connect_error);
@@ -75,6 +79,9 @@ if ($row = $result->fetch_assoc()) {
     $storedPassword = $row['Password']; //  hashed password from DB
 
 
+    error_log('Stored hashed password: ' . $storedPassword);
+
+
     if (empty($storedPassword)) {
         sendResponse('error', 'Invalid login or password');
     }
@@ -87,9 +94,11 @@ if ($row = $result->fetch_assoc()) {
             'lastName' => $row['LastName'],
         ]);
     } else {
+        error_log('Password verification failed.');
         sendResponse('error', 'Invalid login or password');
     }
 } else {
+    error_log('No user found with the provided login.');
     sendResponse('error', 'No Records Found');
 }
 
