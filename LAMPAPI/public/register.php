@@ -64,7 +64,7 @@ $stmt->store_result();
 
 if ($stmt->num_rows > 0) {
     error_log('Duplicate User: ' . $inData['login']);
-    sendResponse('error', 'User with this login already exists');
+    sendResponse('error', 'User with this username already exists');
 }
 $stmt->close();
 
