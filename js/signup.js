@@ -68,14 +68,22 @@ import { URL_BASE, EXTENSION } from "./global.js";
 
 function registerUser() {
   console.log("registerUser function called");
-  const firstName = document.getElementById("firstName").value;
-  const lastName = document.getElementById("lastName").value;
-  const username = document.getElementById("newUsername").value;
-  const password = document.getElementById("newPassword").value;
-  const confirmPassword = document.getElementById("confirmPassword").value;
+  const signupError = document.getElementById("signupError");
+  signupError.textContent = "";
+
+  const firstName = document.getElementById("firstName").value.trim();
+  const lastName = document.getElementById("lastName").value.trim();
+  const username = document.getElementById("newUsername").value.trim();
+  const password = document.getElementById("newPassword").value.trim();
+  const confirmPassword = document.getElementById("confirmPassword").value.trim();
+
+  if (!firstName || !lastName || !username || !password || !confirmPassword) {
+    signupError.textContent = "All fields are required.";
+    return;
+  }
 
   if (password !== confirmPassword) {
-    alert("Passwords do not match");
+    signupError.textContent = "Passwords do not match.";
     return;
   }
 
@@ -102,15 +110,18 @@ function registerUser() {
     .then((data) => {
       console.log("Response data:", data);
       if (data.status === "success") {
-        alert("Registration successful");
-        window.location.href = "/";
+        signupError.style.color = "green";
+        signupError.textContent = "Registration successful. Redirecting to login...";
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 2000);  // Redirect after 2 seconds
       } else {
-        alert("Registration failed: " + data.message);
+        signupError.textContent = "Registration failed: " + data.message;
       }
     })
     .catch((error) => {
       console.error("Error:", error);
-      alert("An error occurred during registration");
+      signupError.textContent = "An error occurred during registration. Please try again.";
     });
 }
 
@@ -124,4 +135,3 @@ document.addEventListener("DOMContentLoaded", function () {
       registerUser();
     });
 });
-
