@@ -206,6 +206,4 @@ document.addEventListener("DOMContentLoaded", () => {
   searchBtn.addEventListener("click", handleSearch);
   const logoutBtn = document.getElementById("logoutBtn");
   logoutBtn.addEventListener("click", doLogout);
-
-  handleSearch();
 });
