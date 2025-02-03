@@ -58,7 +58,6 @@ export async function searchContact(userId, query) {
   const jsonPayload = JSON.stringify({ userID: userId, query });
 
   console.log("Searching contacts for user:", userId, "Query:", query);
-  showSpinner();
   try {
     const response = await fetch(url, {
       method: "POST",
@@ -160,19 +159,16 @@ async function handleSearch() {
   const searchInput = document.getElementById("searchInput");
   const searchTerm = searchInput.value.trim();
   const emptySearch = document.querySelector(".empty-search");
-  const loadingSpinner = document.getElementById("loadingSpinner");
-
-  // Hide empty search message when searching
 
   // Show loading spinner
-  loadingSpinner.style.display = "block";
   emptySearch.style.display = "none";
+  showSpinner();
 
   // Perform search
   const userData = readCookie();
   const contacts = await searchContact(userData.userId, searchTerm);
 
-  loadingSpinner.style.display = "none";
+  hideSpinner();
   displayContacts(contacts);
 }
 

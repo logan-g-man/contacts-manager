@@ -123,16 +123,9 @@ async function addContact({
 
     const data = await response.json();
 
-    if (data.status === "success") {
-      console.log("Contact successfully added.");
-    } else {
-      console.error(`Failed to add contact: ${data.message}`);
-      document.getElementById("contactAddResult").innerHTML = data.message;
-    }
+    return data;
   } catch (err) {
     console.error("Error adding contact:", err);
-    document.getElementById("contactAddResult").innerHTML =
-      "An unexpected error occurred while adding the contact.";
   }
 }
 
@@ -156,7 +149,15 @@ async function addFakerContacts(count) {
       notes: faker.lorem.sentence(),
     };
 
-    await addContact(tmp);
+    const contact = await addContact(tmp);
+    const searchInput = document.getElementById("searchInput");
+    const query = searchInput.value.trim();
+    searchContact(userID, query);
+    if (contact.status === "success") {
+      console.log("Contact successfully added.");
+    } else {
+      console.error(`Failed to add contact: ${contact.message}`);
+    }
   }
 }
 
@@ -210,9 +211,10 @@ async function updateContact({
     }
   } catch (err) {
     console.error("Error updating contact:", err);
-    document.getElementById("contactAddResult").innerHTML =
-      "An unexpected error occurred while updating the contact.";
   }
+  const searchInput = document.getElementById("searchInput");
+  const query = searchInput.value.trim();
+  searchContact(userID, query);
 }
 
 async function removeContact(contact) {
@@ -261,6 +263,9 @@ async function removeContact(contact) {
     console.error("Error deleting contact:", err);
     alert("An unexpected error occurred while deleting the contact.");
   }
+  const searchInput = document.getElementById("searchInput");
+  const query = searchInput.value.trim();
+  searchContact(userID, query);
 }
 
 async function handleFormSubmission(e) {
@@ -289,8 +294,19 @@ async function handleFormSubmission(e) {
       contactId: e.target.dataset.contactId,
       ...contact,
     });
+    const searchInput = document.getElementById("searchInput");
+    const query = searchInput.value.trim();
+    searchContact(userID, query);
   } else {
-    await addContact({ ...contact });
+    const added = await addContact({ ...contact });
+    const searchInput = document.getElementById("searchInput");
+    const query = searchInput.value.trim();
+    searchContact(userID, query);
+    if (added.status === "success") {
+      console.log("Contact successfully added.");
+    } else {
+      console.error(`Failed to add contact: ${added.message}`);
+    }
   }
 
   // Close the dialog after submission
@@ -299,8 +315,6 @@ async function handleFormSubmission(e) {
   // Get the current search query
   const searchInput = document.getElementById("searchInput");
   const query = searchInput.value.trim();
-
-  // Trigger the search only once
   searchContact(userID, query);
 }
 
