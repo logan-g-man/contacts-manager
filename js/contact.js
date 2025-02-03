@@ -1,4 +1,4 @@
-const { faker } = await import("https://esm.sh/@faker-js/faker");
+import { faker } from "https://esm.sh/@faker-js/faker";
 import { URL_BASE, EXTENSION } from "./global.js";
 import { searchContact, getAllContacts } from "./search.js";
 
@@ -137,16 +137,17 @@ async function addFakerContacts(count) {
     return;
   }
   for (let i = 0; i < count; i++) {
+    console.log("Adding contact", i);
     const tmp = {
       firstName: faker.person.firstName(),
       lastName: faker.person.lastName(),
       email: faker.internet.email(),
-      phone: faker.phone.phoneNumber(),
+      phone: faker.phone.number(),
       address: faker.address.streetAddress(),
       notes: faker.lorem.sentence(),
     };
 
-    addContact(tmp);
+    await addContact(tmp);
   }
 }
 
@@ -253,11 +254,53 @@ async function removeContact(contact) {
   }
 }
 
+async function handleFormSubmission(e) {
+  const userID = getUserId();
+  const { firstName, lastName, email, phone, address, notes } = e.target;
+
+  // Validate required fields
+  if (!firstName.value || !lastName.value || !email.value || !phone.value) {
+    document.getElementById("contactAddResult").innerHTML =
+      "All required fields must be filled.";
+    return;
+  }
+
+  // Set default values for optional fields
+  const contact = {
+    firstName: firstName.value,
+    lastName: lastName.value,
+    email: email.value,
+    phone: phone.value,
+    address: address.value || "",
+    notes: notes.value || "",
+  };
+
+  if (e.target.dataset.mode === "edit") {
+    await updateContact({
+      contactId: e.target.dataset.contactId,
+      ...contact,
+    });
+  } else {
+    await addContact({ ...contact });
+  }
+
+  // Close the dialog after submission
+  addContactDialog.style.display = "none";
+
+  // Get the current search query
+  const searchInput = document.getElementById("searchInput");
+  const query = searchInput.value.trim();
+
+  // Trigger the search only once
+  searchContact(userID, query);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const addContactBtn = document.getElementById("addContactBtn");
   const addContactDialog = document.getElementById("addContactDialog");
   const cancelAddBtn = document.getElementById("cancelAdd");
   const addContactForm = document.getElementById("addContactForm");
+  const addFakerBtn = document.getElementById("addFakerBtn");
 
   // Show add contact dialog
   addContactBtn.addEventListener("click", () => {
@@ -269,46 +312,12 @@ document.addEventListener("DOMContentLoaded", () => {
     addContactDialog.style.display = "none";
   });
 
-  // Handle form submission
   addContactForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const userID = getUserId();
-    const { firstName, lastName, email, phone, address, notes } = e.target;
-
-    // Validate required fields
-    if (!firstName.value || !lastName.value || !email.value || !phone.value) {
-      document.getElementById("contactAddResult").innerHTML =
-        "All required fields must be filled.";
-      return;
-    }
-
-    // Set default values for optional fields
-    const contact = {
-      firstName: firstName.value,
-      lastName: lastName.value,
-      email: email.value,
-      phone: phone.value,
-      address: address.value || "",
-      notes: notes.value || "",
-    };
-
-    if (e.target.dataset.mode === "edit") {
-      await updateContact({
-        contactId: e.target.dataset.contactId,
-        ...contact,
-      });
-    } else {
-      await addContact({ ...contact });
-    }
-
-    // Close the dialog after submission
-    addContactDialog.style.display = "none";
-
-    // Get the current search query
-    const searchInput = document.getElementById("searchInput");
-    const query = searchInput.value.trim();
-
-    // Trigger the search only once
-    searchContact(userID, query);
+    await handleFormSubmission(e);
+  });
+  addFakerBtn.addEventListener("click", async () => {
+    console.log("Adding faker contacts");
+    await addFakerContacts(10);
   });
 });
