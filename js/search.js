@@ -125,7 +125,9 @@ const getContactSlice = (contacts, currentPage) => {
 export function displayContacts(contacts, currentPage = 1) {
   const contactList = document.getElementById("contactList");
 
-  if (contacts && contacts.length === 0) {
+  contacts = contacts || [];
+
+  if (contacts.length === 0) {
     contactList.innerHTML = "No contact found!";
     const containers = document.querySelectorAll(
       "[id^='paginationContainer-']",
