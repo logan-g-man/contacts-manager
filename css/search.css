@@ -17,7 +17,6 @@ header h1 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.25rem;
   gap: 1rem;
 }
 
@@ -43,6 +42,23 @@ header h1 {
 
 #logoutBtn:hover {
   background-color: #d32f2f;
+}
+
+.paginationContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1rem;
+}
+
+.paginationContainer button {
+  padding: 0.5rem;
+  font-size: 1rem;
+  background-color: #333;
+  color: #fff;
+  border: none;
+  cursor: pointer;
 }
 
 /* Media Queries */

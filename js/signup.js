@@ -57,13 +57,6 @@
 //   });
 // });
 
-
-
-
-
-
-
-
 import { URL_BASE, EXTENSION } from "./global.js";
 
 function registerUser() {
@@ -75,7 +68,9 @@ function registerUser() {
   const lastName = document.getElementById("lastName").value.trim();
   const username = document.getElementById("newUsername").value.trim();
   const password = document.getElementById("newPassword").value.trim();
-  const confirmPassword = document.getElementById("confirmPassword").value.trim();
+  const confirmPassword = document
+    .getElementById("confirmPassword")
+    .value.trim();
 
   if (!firstName || !lastName || !username || !password || !confirmPassword) {
     signupError.textContent = "All fields are required.";
@@ -111,17 +106,19 @@ function registerUser() {
       console.log("Response data:", data);
       if (data.status === "success") {
         signupError.style.color = "green";
-        signupError.textContent = "Registration successful. Redirecting to login...";
+        signupError.textContent =
+          "Registration successful. Redirecting to login...";
         setTimeout(() => {
           window.location.href = "/";
-        }, 2000);  // Redirect after 2 seconds
+        }, 2000); // Redirect after 2 seconds
       } else {
         signupError.textContent = "Registration failed: " + data.message;
       }
     })
     .catch((error) => {
       console.error("Error:", error);
-      signupError.textContent = "An error occurred during registration. Please try again.";
+      signupError.textContent =
+        "An error occurred during registration. Please try again.";
     });
 }
 

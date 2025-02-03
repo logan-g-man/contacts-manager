@@ -82,21 +82,20 @@ const PAGE_SIZE = 20; // New constant for pagination
 // Display contacts on the page with pagination if needed
 function displayContacts(contacts) {
   const contactList = document.getElementById("contactList");
-  // Ensure contacts is an array
   const safeContacts = Array.isArray(contacts) ? contacts : [];
 
-  // If no contacts, show message and remove pagination if present
   if (safeContacts.length === 0) {
     contactList.innerHTML = "No contact found!";
-    const paginationContainer = document.getElementById("paginationContainer");
-    if (paginationContainer) paginationContainer.remove();
+    const containers = document.querySelectorAll("#paginationContainer");
+    for (const container of containers) {
+      container.remove();
+    }
     return;
   }
 
   let currentPage = 1;
   const totalPages = Math.ceil(safeContacts.length / PAGE_SIZE);
 
-  // Helper to render a given page of contacts
   const renderPage = (page) => {
     contactList.innerHTML = "";
     const startIndex = (page - 1) * PAGE_SIZE;
@@ -109,52 +108,70 @@ function displayContacts(contacts) {
 
   renderPage(currentPage);
 
-  // Create or update pagination controls if needed
-  let paginationContainer = document.getElementById("paginationContainer");
+  // Handle multiple pagination containers
   if (totalPages > 1) {
-    if (!paginationContainer) {
-      paginationContainer = document.createElement("div");
-      paginationContainer.id = "paginationContainer";
-      // Append pagination container after contactList
-      contactList.parentNode.insertBefore(paginationContainer, contactList.nextSibling);
+    // Create containers if they don't exist
+    const positions = ["top", "bottom"];
+    for (const position of positions) {
+      let container = document.getElementById(
+        `paginationContainer-${position}`,
+      );
+      if (!container) {
+        container = document.createElement("div");
+        container.id = `paginationContainer-${position}`;
+        if (position === "top") {
+          contactList.parentNode.insertBefore(container, contactList);
+        } else {
+          contactList.parentNode.insertBefore(
+            container,
+            contactList.nextSibling,
+          );
+        }
+      }
     }
-    paginationContainer.innerHTML = "";
-    const prevBtn = document.createElement("button");
-    prevBtn.textContent = "Previous";
-    prevBtn.disabled = currentPage === 1;
-    prevBtn.addEventListener("click", () => {
-      if (currentPage > 1) {
-        currentPage--;
-        renderPage(currentPage);
-        updatePagination();
+
+    const updateAllPaginationContainers = () => {
+      const containers = document.querySelectorAll(
+        '[id^="paginationContainer-"]',
+      );
+      for (const container of containers) {
+        container.innerHTML = `
+          <button class="prevBtn" ${currentPage === 1 ? "disabled" : ""}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M15.41 16.58L10.83 12l4.58-4.59L14 6l-6 6l6 6z"/></svg>  
+          </button>
+          <p>Page ${currentPage} of ${totalPages}</p>
+          <button class="nextBtn" ${currentPage === totalPages ? "disabled" : ""}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M8.59 16.58L13.17 12L8.59 7.41L10 6l6 6l-6 6z"/></svg>  
+          </button>
+        `;
+      }
+    };
+
+    updateAllPaginationContainers();
+
+    document.addEventListener("click", (e) => {
+      if (e.target.closest('[id^="paginationContainer-"]')) {
+        if (e.target.classList.contains("prevBtn") && currentPage > 1) {
+          currentPage--;
+          renderPage(currentPage);
+          updateAllPaginationContainers();
+        } else if (
+          e.target.classList.contains("nextBtn") &&
+          currentPage < totalPages
+        ) {
+          currentPage++;
+          renderPage(currentPage);
+          updateAllPaginationContainers();
+        }
       }
     });
-    paginationContainer.appendChild(prevBtn);
-
-    const pageIndicator = document.createElement("span");
-    pageIndicator.textContent = ` Page ${currentPage} of ${totalPages} `;
-    paginationContainer.appendChild(pageIndicator);
-
-    const nextBtn = document.createElement("button");
-    nextBtn.textContent = "Next";
-    nextBtn.disabled = currentPage === totalPages;
-    nextBtn.addEventListener("click", () => {
-      if (currentPage < totalPages) {
-        currentPage++;
-        renderPage(currentPage);
-        updatePagination();
-      }
-    });
-    paginationContainer.appendChild(nextBtn);
-
-    function updatePagination() {
-      pageIndicator.textContent = ` Page ${currentPage} of ${totalPages} `;
-      prevBtn.disabled = currentPage === 1;
-      nextBtn.disabled = currentPage === totalPages;
-    }
   } else {
-    // Remove pagination container if contacts are fewer than or equal to PAGE_SIZE
-    if (paginationContainer) paginationContainer.remove();
+    const containers = document.querySelectorAll(
+      '[id^="paginationContainer-"]',
+    );
+    for (const container of containers) {
+      container.remove();
+    }
   }
 }
 
@@ -162,19 +179,19 @@ async function handleSearch() {
   console.log("Handling search...");
   const searchInput = document.getElementById("searchInput");
   const searchTerm = searchInput.value.trim();
-  const emptySearch = document.querySelector('.empty-search');
+  const emptySearch = document.querySelector(".empty-search");
   const loadingSpinner = document.getElementById("loadingSpinner");
 
   // Hide empty search message when searching
 
   // Show loading spinner
-  loadingSpinner.style.display = 'block';
-  emptySearch.style.display = 'none';
+  loadingSpinner.style.display = "block";
+  emptySearch.style.display = "none";
 
   // Perform search
   const userData = readCookie();
   await searchContact(userData.userId, searchTerm);
-  loadingSpinner.style.display = 'none';
+  loadingSpinner.style.display = "none";
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -190,5 +207,5 @@ document.addEventListener("DOMContentLoaded", () => {
   const logoutBtn = document.getElementById("logoutBtn");
   logoutBtn.addEventListener("click", doLogout);
 
-  handleSearch()
+  handleSearch();
 });
