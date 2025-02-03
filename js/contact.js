@@ -325,8 +325,10 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
     await handleFormSubmission(e);
   });
-  addFakerBtn.addEventListener("click", async () => {
-    console.log("Adding faker contacts");
-    await addFakerContacts(10);
-  });
+  if (addFakerBtn) {
+    addFakerBtn.addEventListener("click", async () => {
+      console.log("Adding faker contacts");
+      await addFakerContacts(10);
+    });
+  }
 });

@@ -69,100 +69,82 @@ export async function searchContact(userId, query) {
     });
 
     const data = (await response.json()).data;
-    displayContacts(data);
+    return data;
   } catch (err) {
     console.error("Error searching contacts:", err);
   }
 }
 
-const PAGE_SIZE = 20; // New constant for pagination
+const PAGE_SIZE = 21;
+
+const updateAllPaginationContainers = (currentPage, totalPages, contacts) => {
+  const containers = document.querySelectorAll('[id^="paginationContainer-"]');
+  for (const container of containers) {
+    container.innerHTML = `
+      <button id="prevBtn" class="prevBtn" ${currentPage === 1 ? "disabled" : ""}>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M15.41 16.58L10.83 12l4.58-4.59L14 6l-6 6l6 6z"/></svg>  
+      </button>
+      <p>Page ${currentPage} of ${totalPages}</p>
+      <button id="nextBtn" class="nextBtn" ${currentPage === totalPages ? "disabled" : ""}>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M8.59 16.58L13.17 12L8.59 7.41L10 6l6 6l-6 6z"/></svg>  
+      </button>
+    `;
+    const prevBtn = container.querySelector(".prevBtn");
+    prevBtn.addEventListener("click", () => {
+      console.log("contacts", contacts);
+      const contactSlice = getContactSlice(contacts, currentPage - 1);
+      renderContactList(contactSlice);
+      updateAllPaginationContainers(currentPage - 1, totalPages, contacts);
+    });
+    const nextBtn = container.querySelector(".nextBtn");
+    nextBtn.addEventListener("click", () => {
+      const contactSlice = getContactSlice(contacts, currentPage + 1);
+      renderContactList(contactSlice);
+      updateAllPaginationContainers(currentPage + 1, totalPages, contacts);
+    });
+  }
+};
+
+//pass all contacts
+const renderContactList = (contactSlice) => {
+  console.log("contactSlice", contactSlice);
+  const contactList = document.getElementById("contactList");
+  contactList.innerHTML = "";
+  for (const contact of contactSlice) {
+    const newContactCard = createContactCard(contact);
+    contactList.appendChild(newContactCard);
+  }
+};
+
+const getContactSlice = (contacts, currentPage) => {
+  console.log("contacts", contacts);
+  const start = (currentPage - 1) * PAGE_SIZE;
+  return contacts.slice(start, start + PAGE_SIZE);
+};
 
 // Display contacts on the page with pagination if needed
 function displayContacts(contacts) {
   const contactList = document.getElementById("contactList");
-  const safeContacts = Array.isArray(contacts) ? contacts : [];
 
-  if (safeContacts.length === 0) {
+  if (contacts.length === 0) {
     contactList.innerHTML = "No contact found!";
-    const containers = document.querySelectorAll("#paginationContainer");
+    const containers = document.querySelectorAll(
+      "[id^='paginationContainer-']",
+    );
     for (const container of containers) {
       container.remove();
     }
     return;
   }
 
-  let currentPage = 1;
-  const totalPages = Math.ceil(safeContacts.length / PAGE_SIZE);
+  const currentPage = 1;
+  const totalPages = Math.ceil(contacts.length / PAGE_SIZE);
 
-  const renderPage = (page) => {
-    contactList.innerHTML = "";
-    const startIndex = (page - 1) * PAGE_SIZE;
-    const pageContacts = safeContacts.slice(startIndex, startIndex + PAGE_SIZE);
-    for (const contact of pageContacts) {
-      const newContactCard = createContactCard(contact);
-      contactList.appendChild(newContactCard);
-    }
-  };
-
-  renderPage(currentPage);
+  renderContactList(getContactSlice(contacts, currentPage));
 
   // Handle multiple pagination containers
   if (totalPages > 1) {
-    // Create containers if they don't exist
-    const positions = ["top", "bottom"];
-    for (const position of positions) {
-      let container = document.getElementById(
-        `paginationContainer-${position}`,
-      );
-      if (!container) {
-        container = document.createElement("div");
-        container.id = `paginationContainer-${position}`;
-        if (position === "top") {
-          contactList.parentNode.insertBefore(container, contactList);
-        } else {
-          contactList.parentNode.insertBefore(
-            container,
-            contactList.nextSibling,
-          );
-        }
-      }
-    }
-
-    const updateAllPaginationContainers = () => {
-      const containers = document.querySelectorAll(
-        '[id^="paginationContainer-"]',
-      );
-      for (const container of containers) {
-        container.innerHTML = `
-          <button class="prevBtn" ${currentPage === 1 ? "disabled" : ""}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M15.41 16.58L10.83 12l4.58-4.59L14 6l-6 6l6 6z"/></svg>  
-          </button>
-          <p>Page ${currentPage} of ${totalPages}</p>
-          <button class="nextBtn" ${currentPage === totalPages ? "disabled" : ""}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M8.59 16.58L13.17 12L8.59 7.41L10 6l6 6l-6 6z"/></svg>  
-          </button>
-        `;
-      }
-    };
-
-    updateAllPaginationContainers();
-
-    document.addEventListener("click", (e) => {
-      if (e.target.closest('[id^="paginationContainer-"]')) {
-        if (e.target.classList.contains("prevBtn") && currentPage > 1) {
-          currentPage--;
-          renderPage(currentPage);
-          updateAllPaginationContainers();
-        } else if (
-          e.target.classList.contains("nextBtn") &&
-          currentPage < totalPages
-        ) {
-          currentPage++;
-          renderPage(currentPage);
-          updateAllPaginationContainers();
-        }
-      }
-    });
+    updateAllPaginationContainers(currentPage, totalPages, contacts);
   } else {
     const containers = document.querySelectorAll(
       '[id^="paginationContainer-"]',
@@ -188,8 +170,10 @@ async function handleSearch() {
 
   // Perform search
   const userData = readCookie();
-  await searchContact(userData.userId, searchTerm);
+  const contacts = await searchContact(userData.userId, searchTerm);
+
   loadingSpinner.style.display = "none";
+  displayContacts(contacts);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
