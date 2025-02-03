@@ -122,7 +122,7 @@ const getContactSlice = (contacts, currentPage) => {
 };
 
 // Display contacts on the page with pagination if needed
-function displayContacts(contacts) {
+export function displayContacts(contacts, currentPage = 1) {
   const contactList = document.getElementById("contactList");
 
   if (contacts.length === 0) {
@@ -136,7 +136,6 @@ function displayContacts(contacts) {
     return;
   }
 
-  const currentPage = 1;
   const totalPages = Math.ceil(contacts.length / PAGE_SIZE);
 
   renderContactList(getContactSlice(contacts, currentPage));

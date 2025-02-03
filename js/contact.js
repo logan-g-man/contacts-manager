@@ -1,6 +1,6 @@
 import { faker } from "https://esm.sh/@faker-js/faker";
 import { URL_BASE, EXTENSION } from "./global.js";
-import { searchContact, getAllContacts } from "./search.js";
+import { searchContact, displayContacts } from "./search.js";
 
 export function createContactCard(contact) {
   console.log(contact);
@@ -150,15 +150,16 @@ async function addFakerContacts(count) {
     };
 
     const contact = await addContact(tmp);
-    const searchInput = document.getElementById("searchInput");
-    const query = searchInput.value.trim();
-    searchContact(userID, query);
     if (contact.status === "success") {
       console.log("Contact successfully added.");
     } else {
       console.error(`Failed to add contact: ${contact.message}`);
     }
   }
+  const searchInput = document.getElementById("searchInput");
+  const query = searchInput.value.trim();
+  const contacts = await searchContact(userID, query);
+  displayContacts(contacts);
 }
 
 async function updateContact({
@@ -214,7 +215,8 @@ async function updateContact({
   }
   const searchInput = document.getElementById("searchInput");
   const query = searchInput.value.trim();
-  searchContact(userID, query);
+  const contacts = await searchContact(userID, query);
+  displayContacts(contacts);
 }
 
 async function removeContact(contact) {
@@ -244,20 +246,8 @@ async function removeContact(contact) {
 
     if (data.status === "success") {
       console.log(`Contact ID ${contactId} successfully deleted.`);
-
-      // Get the current query from the search input
-      const searchInput = document.getElementById("searchInput");
-      const query = searchInput.value.trim();
-
-      // Refresh the contact list based on the current query
-      if (query === "") {
-        getAllContacts(userID); // If no search query, load all contacts
-      } else {
-        searchContact(userID, query); // Otherwise, refresh based on search query
-      }
     } else {
       console.error(`Failed to delete contact: ${data.message}`);
-      alert(`Error: ${data.message}`);
     }
   } catch (err) {
     console.error("Error deleting contact:", err);
@@ -265,7 +255,8 @@ async function removeContact(contact) {
   }
   const searchInput = document.getElementById("searchInput");
   const query = searchInput.value.trim();
-  searchContact(userID, query);
+  const contacts = searchContact(userID, query);
+  displayContacts(contacts);
 }
 
 async function handleFormSubmission(e) {
@@ -294,19 +285,18 @@ async function handleFormSubmission(e) {
       contactId: e.target.dataset.contactId,
       ...contact,
     });
-    const searchInput = document.getElementById("searchInput");
-    const query = searchInput.value.trim();
-    searchContact(userID, query);
   } else {
     const added = await addContact({ ...contact });
-    const searchInput = document.getElementById("searchInput");
-    const query = searchInput.value.trim();
-    searchContact(userID, query);
     if (added.status === "success") {
       console.log("Contact successfully added.");
     } else {
       console.error(`Failed to add contact: ${added.message}`);
     }
+
+    const searchInput = document.getElementById("searchInput");
+    const query = searchInput.value.trim();
+    const contacts = await searchContact(userID, query);
+    displayContacts(contacts);
   }
 
   // Close the dialog after submission
@@ -315,7 +305,8 @@ async function handleFormSubmission(e) {
   // Get the current search query
   const searchInput = document.getElementById("searchInput");
   const query = searchInput.value.trim();
-  searchContact(userID, query);
+  const contacts = await searchContact(userID, query);
+  displayContacts(contacts);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
