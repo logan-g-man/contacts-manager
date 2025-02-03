@@ -1,6 +1,17 @@
 import { URL_BASE, EXTENSION } from "./global.js";
 import { createContactCard } from "./contact.js";
 
+// Add spinner helper functions
+function showSpinner() {
+  const spinner = document.getElementById("loadingSpinner");
+  if (spinner) spinner.style.display = "block";
+}
+
+function hideSpinner() {
+  const spinner = document.getElementById("loadingSpinner");
+  if (spinner) spinner.style.display = "none";
+}
+
 function readCookie() {
   const userData = JSON.parse(localStorage.getItem("userData") || "{}");
 
@@ -23,6 +34,7 @@ export async function getAllContacts(userId) {
   const jsonPayload = JSON.stringify({ userID: userId });
 
   console.log("Fetching contacts for user:", userId);
+  showSpinner();
   try {
     const response = await fetch(url, {
       method: "POST",
@@ -36,6 +48,8 @@ export async function getAllContacts(userId) {
     displayContacts(data);
   } catch (err) {
     console.error("Error fetching all contacts:", err);
+  } finally {
+    hideSpinner();
   }
 }
 
@@ -45,6 +59,7 @@ export async function searchContact(userId, query) {
   const jsonPayload = JSON.stringify({ userID: userId, query });
 
   console.log("Searching contacts for user:", userId, "Query:", query);
+  showSpinner();
   try {
     const response = await fetch(url, {
       method: "POST",
@@ -58,8 +73,11 @@ export async function searchContact(userId, query) {
     displayContacts(data);
   } catch (err) {
     console.error("Error searching contacts:", err);
+  } finally {
+    hideSpinner();
   }
 }
+
 // Display contacts on the page
 function displayContacts(contacts) {
   const contactList = document.getElementById("contactList");

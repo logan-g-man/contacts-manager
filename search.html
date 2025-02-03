@@ -33,7 +33,11 @@
         </button>
       </header>
       <div class="search-add">
-        <input type="text" id="searchInput" placeholder="Search contacts..." />
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search by name, address, notes, number..."
+        />
         <button class="search-add-btn" id="searchBtn">
           <svg
             class="search-icon"
@@ -66,7 +70,13 @@
       </div>
       <div id="contactList">
         <!-- Contact cards will be dynamically added here -->
-        <strong>Please use the search box to find your contacts.</strong>
+      </div>
+      <h3 class="empty-search">
+        Please use the search box to find your contacts.
+      </h3>
+      <!-- Add loading spinner -->
+      <div id="loadingSpinner" class="spinner" style="display: none">
+        Loading...
       </div>
     </div>
 

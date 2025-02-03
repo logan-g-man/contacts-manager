@@ -1,6 +1,6 @@
 #contactList {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(15.625rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(16.625rem, 1fr));
   gap: 1.25rem;
 }
 
@@ -9,6 +9,9 @@
   border-radius: 0.3125rem;
   box-shadow: 0 0.125rem 0.3125rem rgba(0, 0, 0, 0.1);
   padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3125rem;
 }
 
 .contact-card h2 {
@@ -18,7 +21,7 @@
 .contact-actions {
   display: flex;
   gap: 0.625rem;
-  margin-top: 0.625rem;
+  justify-content: flex-end;
 }
 
 .edit-btn,

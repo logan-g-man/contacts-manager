@@ -9,13 +9,6 @@ export function createContactCard(contact) {
   contactCard.dataset.contactId = contact.ID;
 
   contactCard.innerHTML = `
-    <div class="contact-info">
-      <h3>Name: ${contact.FirstName} ${contact.LastName}</h3>
-      <p>Email: ${contact.Email}</p>
-      <p>Phone: ${contact.Phone}</p>
-      <p>Address: ${contact.Address}</p>
-      <p><strong>Notes:</strong> ${contact.Notes || "No notes available"}</p>
-    </div>
     <div class="contact-actions">
       <button class="edit-btn">
         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path fill="currentColor" d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83l3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75z"/></svg>
@@ -25,6 +18,13 @@ export function createContactCard(contact) {
         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path fill="currentColor" d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6z"/></svg>
         Delete
       </button>
+    </div>
+    <div class="contact-info">
+      <h3>Name: ${contact.FirstName} ${contact.LastName}</h3>
+      <p><strong>Email:</strong> ${contact.Email}</p>
+      <p><strong>Phone:</strong> ${contact.Phone}</p>
+      <p><strong>Address:</strong> ${contact.Address}</p>
+      <p><strong>Notes:</strong> ${contact.Notes || "No notes available"}</p>
     </div>
   `;
 
