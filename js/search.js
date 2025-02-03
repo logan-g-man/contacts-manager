@@ -74,26 +74,92 @@ export async function searchContact(userId, query) {
   } catch (err) {
     console.error("Error searching contacts:", err);
   } finally {
-    hideSpinner();
   }
 }
 
-// Display contacts on the page
+const PAGE_SIZE = 20; // New constant for pagination
+
+// Display contacts on the page with pagination if needed
 function displayContacts(contacts) {
   const contactList = document.getElementById("contactList");
-
-  // Ensure contacts is an array even if the API returns null/undefined
+  // Ensure contacts is an array
   const safeContacts = Array.isArray(contacts) ? contacts : [];
 
-  contactList.innerHTML = safeContacts.length ? "" : "No contact found!";
+  // If no contacts, show message and remove pagination if present
+  if (safeContacts.length === 0) {
+    contactList.innerHTML = "No contact found!";
+    const paginationContainer = document.getElementById("paginationContainer");
+    if (paginationContainer) paginationContainer.remove();
+    return;
+  }
 
-  for (const contact of safeContacts) {
-    const newContactCard = createContactCard(contact);
-    contactList.appendChild(newContactCard);
+  let currentPage = 1;
+  const totalPages = Math.ceil(safeContacts.length / PAGE_SIZE);
+
+  // Helper to render a given page of contacts
+  const renderPage = (page) => {
+    contactList.innerHTML = "";
+    const startIndex = (page - 1) * PAGE_SIZE;
+    const pageContacts = safeContacts.slice(startIndex, startIndex + PAGE_SIZE);
+    for (const contact of pageContacts) {
+      const newContactCard = createContactCard(contact);
+      contactList.appendChild(newContactCard);
+    }
+  };
+
+  renderPage(currentPage);
+
+  // Create or update pagination controls if needed
+  let paginationContainer = document.getElementById("paginationContainer");
+  if (totalPages > 1) {
+    if (!paginationContainer) {
+      paginationContainer = document.createElement("div");
+      paginationContainer.id = "paginationContainer";
+      // Append pagination container after contactList
+      contactList.parentNode.insertBefore(paginationContainer, contactList.nextSibling);
+    }
+    paginationContainer.innerHTML = "";
+    const prevBtn = document.createElement("button");
+    prevBtn.textContent = "Previous";
+    prevBtn.disabled = currentPage === 1;
+    prevBtn.addEventListener("click", () => {
+      if (currentPage > 1) {
+        currentPage--;
+        renderPage(currentPage);
+        updatePagination();
+      }
+    });
+    paginationContainer.appendChild(prevBtn);
+
+    const pageIndicator = document.createElement("span");
+    pageIndicator.textContent = ` Page ${currentPage} of ${totalPages} `;
+    paginationContainer.appendChild(pageIndicator);
+
+    const nextBtn = document.createElement("button");
+    nextBtn.textContent = "Next";
+    nextBtn.disabled = currentPage === totalPages;
+    nextBtn.addEventListener("click", () => {
+      if (currentPage < totalPages) {
+        currentPage++;
+        renderPage(currentPage);
+        updatePagination();
+      }
+    });
+    paginationContainer.appendChild(nextBtn);
+
+    function updatePagination() {
+      pageIndicator.textContent = ` Page ${currentPage} of ${totalPages} `;
+      prevBtn.disabled = currentPage === 1;
+      nextBtn.disabled = currentPage === totalPages;
+    }
+  } else {
+    // Remove pagination container if contacts are fewer than or equal to PAGE_SIZE
+    if (paginationContainer) paginationContainer.remove();
   }
 }
 
-function handleSearch() {
+async function handleSearch() {
+  console.log("Handling search...");
   const searchInput = document.getElementById("searchInput");
   const searchTerm = searchInput.value.trim();
   const emptySearch = document.querySelector('.empty-search');
@@ -107,7 +173,8 @@ function handleSearch() {
 
   // Perform search
   const userData = readCookie();
-  searchContact(userData.userId, searchTerm);
+  await searchContact(userData.userId, searchTerm);
+  loadingSpinner.style.display = 'none';
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -122,12 +189,6 @@ document.addEventListener("DOMContentLoaded", () => {
   searchBtn.addEventListener("click", handleSearch);
   const logoutBtn = document.getElementById("logoutBtn");
   logoutBtn.addEventListener("click", doLogout);
-  if (!searched) {
-    loadingSpinner.style.display = 'none';
-    emptySearch.style.display = 'block';
-    return;
-  }
 
-  handleSearch();
-  // Call handleSearch on page load
+  handleSearch()
 });

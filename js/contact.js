@@ -152,7 +152,7 @@ async function addFakerContacts(count) {
       lastName: faker.person.lastName(),
       email: faker.internet.email(),
       phone: faker.phone.number(),
-      address: faker.address.streetAddress(),
+      address: faker.location.streetAddress(),
       notes: faker.lorem.sentence(),
     };
 
