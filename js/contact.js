@@ -1,3 +1,4 @@
+const { faker } = await import("https://esm.sh/@faker-js/faker");
 import { URL_BASE, EXTENSION } from "./global.js";
 import { searchContact, getAllContacts } from "./search.js";
 
@@ -73,7 +74,14 @@ function getUserId() {
   return userData ? JSON.parse(userData).userId : null;
 }
 
-async function addContact(firstName, lastName, email, phone, address, notes) {
+async function addContact({
+  firstName,
+  lastName,
+  email,
+  phone,
+  address,
+  notes,
+}) {
   const userID = getUserId(); // Retrieve user ID from localStorage
 
   if (!userID) {
@@ -119,7 +127,30 @@ async function addContact(firstName, lastName, email, phone, address, notes) {
   }
 }
 
-async function updateContact(
+async function addFakerContacts(count) {
+  const userID = getUserId(); // Retrieve user ID from localStorage
+
+  if (!userID) {
+    document.getElementById("contactAddResult").innerHTML =
+      "User ID not found. Please log in again.";
+    window.location.href = "/";
+    return;
+  }
+  for (let i = 0; i < count; i++) {
+    const tmp = {
+      firstName: faker.person.firstName(),
+      lastName: faker.person.lastName(),
+      email: faker.internet.email(),
+      phone: faker.phone.phoneNumber(),
+      address: faker.address.streetAddress(),
+      notes: faker.lorem.sentence(),
+    };
+
+    addContact(tmp);
+  }
+}
+
+async function updateContact({
   contactId,
   firstName,
   lastName,
@@ -127,7 +158,7 @@ async function updateContact(
   phone,
   address,
   notes,
-) {
+}) {
   const userID = getUserId(); // Retrieve user ID from localStorage
 
   if (!userID) {
@@ -252,28 +283,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Set default values for optional fields
-    const addressValue = address.value || "";
-    const notesValue = notes.value || "";
+    const contact = {
+      firstName: firstName.value,
+      lastName: lastName.value,
+      email: email.value,
+      phone: phone.value,
+      address: address.value || "",
+      notes: notes.value || "",
+    };
 
     if (e.target.dataset.mode === "edit") {
-      await updateContact(
-        e.target.dataset.contactId,
-        firstName.value,
-        lastName.value,
-        email.value,
-        phone.value,
-        addressValue,
-        notesValue,
-      );
+      await updateContact({
+        contactId: e.target.dataset.contactId,
+        ...contact,
+      });
     } else {
-      await addContact(
-        firstName.value,
-        lastName.value,
-        email.value,
-        phone.value,
-        addressValue,
-        notesValue,
-      );
+      await addContact({ ...contact });
     }
 
     // Close the dialog after submission
