@@ -20,6 +20,11 @@
   height: 100vh;
 }
 
+#loginResult {
+  color: red;
+  text-align: center;
+}
+
 .container-auth {
   background-color: white;
   padding: 2rem;
