@@ -48,9 +48,8 @@ export async function getAllContacts(userId) {
     displayContacts(data);
   } catch (err) {
     console.error("Error fetching all contacts:", err);
-  } finally {
-    hideSpinner();
   }
+  hideSpinner();
 }
 
 // Search contacts based on the query
@@ -73,7 +72,6 @@ export async function searchContact(userId, query) {
     displayContacts(data);
   } catch (err) {
     console.error("Error searching contacts:", err);
-  } finally {
   }
 }
 
