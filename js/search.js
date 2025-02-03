@@ -93,6 +93,23 @@ function displayContacts(contacts) {
   }
 }
 
+function handleSearch() {
+  const searchInput = document.getElementById("searchInput");
+  const searchTerm = searchInput.value.trim();
+  const emptySearch = document.querySelector('.empty-search');
+  const loadingSpinner = document.getElementById("loadingSpinner");
+
+  // Hide empty search message when searching
+
+  // Show loading spinner
+  loadingSpinner.style.display = 'block';
+  emptySearch.style.display = 'none';
+
+  // Perform search
+  const userData = readCookie();
+  searchContact(userData.userId, searchTerm);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const userData = readCookie();
   console.log("User ID after reading cookie:", userData.userId);
@@ -101,16 +118,16 @@ document.addEventListener("DOMContentLoaded", () => {
     userData.location.href = "index.html";
   }
 
-  const searchInput = document.getElementById("searchInput");
   const searchBtn = document.getElementById("searchBtn");
-  searchBtn.addEventListener("click", () => {
-    const query = searchInput.value.trim();
-    if (query === "") {
-      getAllContacts(userData.userId);
-    } else {
-      searchContact(userData.userId, query);
-    }
-  });
+  searchBtn.addEventListener("click", handleSearch);
   const logoutBtn = document.getElementById("logoutBtn");
   logoutBtn.addEventListener("click", doLogout);
+  if (!searched) {
+    loadingSpinner.style.display = 'none';
+    emptySearch.style.display = 'block';
+    return;
+  }
+
+  handleSearch();
+  // Call handleSearch on page load
 });

@@ -14,6 +14,24 @@
   gap: 0.3125rem;
 }
 
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+.contact-info p {
+  display: flex;
+  align-items: center;
+  text-wrap: wrap;
+  word-break: break-all;
+  gap: 0.625rem;
+}
+
+.contact-info svg {
+  color: #666;
+  min-width: max-content;
+}
+
 .contact-card h2 {
   margin-top: 0;
 }
