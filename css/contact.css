@@ -43,6 +43,8 @@
 .dialog {
   display: none;
   position: fixed;
+  justify-content: center;
+  align-items: center;
   z-index: 1;
   left: 0;
   top: 0;
@@ -54,7 +56,6 @@
 
 .dialog-content {
   background-color: #fefefe;
-  margin: 15% auto;
   padding: 20px;
   border: 1px solid #888;
   width: 80%;

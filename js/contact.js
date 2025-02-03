@@ -64,7 +64,7 @@ function openContactDialog(contact) {
     delete form.dataset.contactId; // Clear any leftover contact ID
   }
 
-  dialog.style.display = "block";
+  dialog.style.display = "flex";
 }
 
 // Utility function to get the user ID from localStorage

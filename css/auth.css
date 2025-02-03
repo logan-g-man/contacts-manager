@@ -1,3 +1,18 @@
+.name-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.name-group .form-group {
+  flex: 1;
+}
+
+#signupError {
+  font-size: 14px;
+  margin-top: 10px;
+}
+
 .body {
   display: flex;
   justify-content: center;
