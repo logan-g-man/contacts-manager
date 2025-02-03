@@ -7,7 +7,18 @@ header {
   padding: 0.625rem 1.25rem;
   margin-bottom: 1.25rem;
 }
+.right {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+}
 
+#userGreeting {
+  min-height: 2rem;
+  text-wrap: balance;
+  text-align: end;
+}
 header h1 {
   margin: 0;
   font-size: 2rem;

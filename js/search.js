@@ -173,6 +173,10 @@ async function handleSearch() {
 
 document.addEventListener("DOMContentLoaded", () => {
   const userData = readCookie();
+  // Set greeting if username exists
+  const greetingEl = document.getElementById("userGreeting");
+  console.log("User data:", userData);
+  greetingEl.textContent = `Hello, ${userData.firstName} ${userData.lastName}`;
   console.log("User ID after reading cookie:", userData.userId);
   if (!userData.userId) {
     console.error("User ID not found, redirecting to login.");
