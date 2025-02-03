@@ -29,6 +29,8 @@ header h1 {
   display: flex;
   justify-content: center;
   align-items: center;
+  text-wrap: balance;
+  text-align: center;
   height: 100%;
   font-size: 1.5rem;
   color: #666;
